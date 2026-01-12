@@ -1,0 +1,29 @@
+<div class="settings">
+    <h1 class="settings-title">Settings</h1>
+    <form class="settings-form" [formGroup]="settingsForm" (submit)="onSubmit()">
+        <div class="settings-form__block">
+            <label for="work" class="settings-form__block--label">Work (minutes):</label>
+            <input id="work" type="number" class="settings-form__block--input" formControlName="workTime" placeholder="0" autocomplete="off">
+        </div>
+        <div class="settings-form__block">
+            <label for="short-break" class="settings-form__block--label">Short Break (minutes):</label>
+            <input id="short-break" type="number" class="settings-form__block--input" formControlName="shortBreakTime" placeholder="0" autocomplete="off">
+        </div>
+        <div class="settings-form__block">
+            <label for="long-break" class="settings-form__block--label">Long Break (minutes):</label>
+            <input id="long-break" type="number" class="settings-form__block--input" formControlName="longBreakTime" placeholder="0" autocomplete="off">
+        </div>
+        <div class="settings-form__block">
+            <label for="number-of-cycles" class="settings-form__block--label">Number of Cycles</label>
+            <input id="number-of-cycles" type="number" class="settings-form__block--input" formControlName="numberOfCycles" placeholder="0" autocomplete="off">
+        </div>
+        <div class="settings-form__block">
+            <label for="max-confirmation-time" class="settings-form__block--label">Waiting time (minutes):</label>
+            <input id="max-confirmation-time" type="number" class="settings-form__block--input" formControlName="maxConfirmationTime" placeholder="0" autocomplete="off">
+        </div>
+        <div class="settings-form__buttons">
+            <button type="button" class="settings-form__button settings-form__button--secondary" routerLink="/pomodoro">Go back</button>
+            <button type="submit" class="settings-form__button settings-form__button--primary" [disabled]="!settingsForm.valid">Save</button>
+        </div>
+    </form>
+</div>

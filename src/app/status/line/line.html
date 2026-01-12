@@ -1,0 +1,9 @@
+<div class="status-line">
+    <div class="status-line__title">{{ status().name }}</div>
+    <div class="status-line__result" [class]="'status-line__' + responseStatus()">
+        <div class="status-line__result--status">{{ responseStatus() | titlecase }}</div>
+        @if (responseStatus() === 'error') {
+            <div class="status-line__result--message">{{ response().message }}</div>
+        }
+    </div>
+</div>

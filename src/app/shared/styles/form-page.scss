@@ -1,0 +1,134 @@
+@use "sass:color";
+
+$blue-color-1: #4ba9c8;
+$blue-color-2: color.scale($blue-color-1, $lightness: -20%);
+$blue-color-3: color.scale($blue-color-1, $lightness: 20%);
+
+.form-page {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem;
+
+    &-title {
+        text-align: center;
+        font-size: 10rem;
+        color: var(--black-color-2);
+    }
+
+    &-info {
+        text-align: center;
+        font-size: 2.5rem;
+        color: var(--gray-color-1);
+    }
+
+    &-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        &__block {
+            align-self: center;
+
+            &--label {
+                display: block;
+                font-size: 2.5rem;
+                color: var(--gray-color-3);
+            }
+
+            &--input {
+                border: 1px solid var(--gray-color-1);
+                border-radius: 1rem;
+                font-size: 2rem;
+                font-family: var(--font-family);
+                color: var(--input-text-color);
+                padding: 0.5rem;
+
+                &::placeholder {
+                    color: var(--gray-color-2);
+                }
+
+                &:hover, &:focus {
+                    border-color: var(--black-color-2);
+                }
+            }
+
+            &--invalid {
+                border-width: 2px;
+                border-color: var(--red-color-2);
+                padding: calc(0.5rem - 1px);
+            }
+        }
+
+        &__link {
+            display: flex;
+            justify-content: flex-end;
+
+            &--interactible {
+                text-decoration: none;
+                color: $blue-color-1;
+                font-size: 1.5rem;
+
+                &:hover, &:focus {
+                    color: $blue-color-2;
+                }
+            }
+        }
+
+        &__buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 3rem;
+            margin-top: 4.5rem;
+        }
+
+        &__button {
+            font-size: 3.5rem;
+            border-radius: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            border: 0;
+            font-family: var(--font-family);
+            color: var(--white-color-1);
+
+            &:not(:disabled) {
+                cursor: pointer;
+            }
+
+            &--primary {
+                background-color: $blue-color-1;
+
+                &:not(:disabled) {
+                    &:hover, &:focus {
+                        background-color: $blue-color-2;
+                    }
+                }
+
+                &:disabled {
+                    background-color: $blue-color-3;
+                }
+            }
+
+            &--secondary {
+                background-color: var(--gray-color-1);
+
+                &:hover, &:focus {
+                    background-color: var(--gray-color-2);
+                }
+            }
+
+            &--danger {
+                background-color: var(--red-color-1);
+
+                &:hover, &:focus {
+                    background-color: var(--red-color-2);
+                }
+
+                &:disabled {
+                    background-color: var(--red-color-3);
+                }
+            }
+        }
+    }
+}

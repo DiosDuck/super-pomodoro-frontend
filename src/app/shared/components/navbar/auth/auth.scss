@@ -1,0 +1,47 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.auth-menu {
+    &__title {
+        font-size: 4rem;
+    }
+
+    &__subtitle {
+        padding: 0 2rem;
+        
+        display: flex;
+        flex-direction: column;
+
+        &--line {
+            font-size: 1.75rem;
+            color: var(--gray-color-2);
+        }
+    }
+
+    &__list {
+        display: flex;
+        flex-direction: column;
+        padding: 0 2rem;
+
+        &--item {
+            font-family: var(--font-family);
+            background-color: transparent;
+            text-align: left;
+            cursor: pointer;
+            font-size: 2rem;
+            padding: 1rem 0;
+            border: 0;
+
+            &:not(:last-child) {
+                border-bottom: 1px solid var(--gray-color-1);
+            }
+        }
+
+        &--selected, &--item:hover, &--item:focus {
+            color: var(--gray-color-1);
+        }
+    }
+}

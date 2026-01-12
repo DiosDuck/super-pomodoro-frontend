@@ -1,0 +1,53 @@
+.session-chart {
+    display: flex;
+    flex-direction: column;
+
+    &-title {
+        font-size: 3rem;
+        margin-left: 1rem;
+        margin-bottom: 2rem;
+        color: var(--gray-color-2);
+    }
+
+    &-table {
+        border: solid var(--gray-color-1);
+        border-width: 0 0 2px 2px;
+
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+        gap: 0.5rem;
+
+        &__column {
+            display: flex;
+            flex-direction: column;
+            justify-content: end;
+            align-items: center;
+            gap: 1.25rem;
+
+            &--label {
+                font-size: 1.25rem;
+                color: var(--gray-color-2);
+            }
+
+            &--block {
+                width: 3.5rem;
+                background-color: var(--red-color-1);
+            }
+        }
+    }
+
+    &-footer {
+        margin-left: 2px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-around;
+
+        &__date {
+            color: var(--gray-color-2);
+            font-size: 1.25rem;
+            transform-origin: top right;
+            transform: rotate(-25deg);
+        }
+    }
+}

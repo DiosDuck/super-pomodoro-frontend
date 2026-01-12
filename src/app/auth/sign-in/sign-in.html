@@ -1,0 +1,20 @@
+<div class="form-page">
+    <h1 class="form-page-title">Sign in</h1>
+    <form class="form-page-form" [formGroup]="loginForm" (submit)="onSubmit()">
+        <div class="form-page-form__block">
+            <label for="username" class="form-page-form__block--label">Username</label>
+            <input id="username" type="text" class="form-page-form__block--input" formControlName="username" placeholder="username" autocomplete="off">
+        </div>
+        <div class="form-page-form__block">
+            <label for="password" class="form-page-form__block--label">Password</label>
+            <input id="password" type="password" class="form-page-form__block--input" formControlName="password" placeholder="password" autocomplete="off">
+        </div>
+        <div class="form-page-form__link">
+            <a routerLink="/auth/forgot-password" class="form-page-form__link--interactible">Forgot your password?</a>
+        </div>
+        <div class="form-page-form__buttons">
+            <button type="button" class="form-page-form__button form-page-form__button--secondary" (click)="onBack()">Go back</button>
+            <button type="submit" class="form-page-form__button form-page-form__button--primary" [disabled]="!loginForm.valid && !isWaiting">Login</button>
+        </div>
+    </form>
+</div>

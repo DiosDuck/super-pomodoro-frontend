@@ -1,0 +1,35 @@
+.profile {
+    position: relative;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+
+    &-title {
+        text-align: center;
+        font-size: 10rem;
+        color: var(--black-color-2);
+    }
+
+    &-sections {
+        display: flex;
+        flex-direction: column;
+        overflow: scroll;
+        margin-bottom: 0;
+    }
+
+    &-section {
+        margin: 2rem;
+
+        &:not(:last-child) {
+            padding-bottom: 5rem;
+            border-bottom: 2px solid var(--black-color-2);
+        }
+    }
+}

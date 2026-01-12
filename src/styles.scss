@@ -1,0 +1,39 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+    --white-color-1: #f8f8f8;
+
+    --black-color-1: #222;
+    --black-color-2: #1a1a1a;
+
+    --gray-color-1: #AAA;
+    --gray-color-2: #888;
+    --gray-color-3: #444;
+    --gray-color-4: #C8C8C8;
+
+    --red-color-1: #f66;
+    --red-color-2: #f22;
+    --red-color-3: #faa;
+
+    --font-family: "Jersey 25", sans-serif;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+html {
+    font-size: 62.5%;
+    font-family: var(--font-family);
+    font-weight: 400;
+    font-style: normal;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}

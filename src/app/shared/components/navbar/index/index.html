@@ -1,0 +1,22 @@
+<nav class="navbar">
+  <app-nav-bubble
+    [id]="'nav-menu'"
+    [icon]="'menu'"
+    [selectedId]="selectedId"
+    (onSelect)="onSelect($event)"
+  >
+    <app-nav-menu
+      (onSelect)="onSelect($event)"
+    />
+  </app-nav-bubble>
+  <app-nav-bubble
+    [id]="'nav-auth'"
+    [icon]="'person'"
+    [selectedId]="selectedId"
+    (onSelect)="onSelect($event)"
+  >
+    <app-nav-auth 
+      (onSelect)="onSelect($event)" 
+    />
+  </app-nav-bubble>
+</nav>

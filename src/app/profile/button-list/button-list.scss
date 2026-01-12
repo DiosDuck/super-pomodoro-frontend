@@ -1,0 +1,94 @@
+.button-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+
+    &__item {
+        font-size: 3.5rem;
+        border-radius: 1.25rem;
+        padding: 0.75rem 1.5rem;
+        border: 0;
+        font-family: var(--font-family);
+        color: var(--white-color-1);
+        cursor: pointer;
+        background-color: var(--gray-color-1);
+
+        &:hover, &:focus {
+            background-color: var(--gray-color-2);
+        }
+
+        &--danger {
+            background-color: var(--red-color-1);
+
+            &:hover, &:focus {
+                background-color: var(--red-color-2);
+            }
+        }
+    }
+}
+
+.button-dialog {
+    z-index: -1;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 100%;
+    height: 100vh;
+    background-color: transparent;
+    transition-duration: 0.2s;
+
+    &__content {
+        border-radius: 3rem;
+
+        display: flex;
+        flex-direction: column;
+        background-color: var(--white-color-1);
+        
+        transform: translateY(100vh);
+        transition-duration: .2s;
+
+        &--row {
+            align-self: center;
+            justify-self: center;
+            padding: 3rem;
+        }
+
+        &--header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--gray-color-2);
+            text-align: right;
+        }
+
+        &--template {
+            max-width: 30rem;
+            padding: 3rem;
+            font-size: 1.6rem;
+        }
+    }
+
+    &__close {
+        width: 3rem;
+        height: 3rem;
+        margin-right: 1.5rem;
+        fill: var(--gray-color-2);
+        cursor: pointer;
+
+        &:hover, &:focus {
+            fill: var(--gray-color-3);
+        }
+    }
+
+    &:open {
+        z-index: 2000;
+        background-color: rgba($color: #000000, $alpha: 0.6);
+
+        > .button-dialog__content {
+            transform: translateX(0);
+        }
+    }
+}

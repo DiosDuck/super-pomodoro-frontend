@@ -1,0 +1,18 @@
+<div class="personal-info">
+    <div class="personal-info__row">
+        <span class="personal-info__row--label">Display name</span>
+        <span class="personal-info__row--value">{{ user()?.displayName }}</span>
+    </div>
+    <div class="personal-info__row">
+        <span class="personal-info__row--label">Username</span>
+        <span class="personal-info__row--value">{{ user()?.username}}</span>
+    </div>
+    <div class="personal-info__row">
+        <span class="personal-info__row--label">E-mail</span>
+        <span class="personal-info__row--value">{{ user()?.email }}</span>
+    </div>
+    <div class="personal-info__row">
+        <span class="personal-info__row--label">Activated at</span>
+        <span class="personal-info__row--value">{{ activatedAt() | date:'YYYY-MM-dd' }}</span>
+    </div>        
+</div>

@@ -1,0 +1,20 @@
+@if (user() === null) {
+    <h3 class="auth-menu__title">Authentication</h3>    
+}
+@else {
+    <h3 class="auth-menu__title">Welcome back, {{user()!.displayName}}!</h3>
+    <div class="auth-menu__subtitle">
+        <div class="auth-menu__subtitle--line">Username: {{user()!.username}}</div>
+        <div class="auth-menu__subtitle--line">Email: {{user()!.email}}</div>
+    </div>
+}
+<div class="auth-menu__list">
+    @if (user() === null) {
+        <button class="auth-menu__list--item" [class.auth-menu__list--selected]="'/auth/sign-in' === router.url" routerLink="/auth/sign-in" (click)="toggle()">Login</button>
+        <button class="auth-menu__list--item" [class.auth-menu__list--selected]="'/auth/register' === router.url" routerLink="/auth/register" (click)="toggle()">Register</button>
+    }
+    @else {
+        <button class="auth-menu__list--item" [class.auth-menu__list--selected]="'/profile' === router.url" routerLink="/profile">Profile</button>
+        <button class="auth-menu__list--item" (click)="toggle(); onLogout()">Logout</button>
+    }
+</div>

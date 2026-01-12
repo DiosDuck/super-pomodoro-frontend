@@ -1,0 +1,6 @@
+<h3 class="menu__title" routerLink="/" (click)="toggle()">Menu</h3>
+<div class="menu__list">
+    @for (navItem of (navItems | loggedIn: user()); track $index) {
+        <button class="menu__list--item" [class.menu__list--selected]="navItem.url === router.url" (click)="toggle()" routerLink="{{navItem.url}}">{{navItem.name}}</button>
+    }
+</div>

@@ -1,0 +1,117 @@
+@use "sass:color";
+
+$blue-color-1: #4ba9c8;
+
+.settings {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5rem;
+
+    &-title {
+        text-align: center;
+        font-size: 10rem;
+        color: var(--black-color-2);
+    }
+
+    &-form {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+
+        @media (max-width: 600px) {
+            align-items: center;
+        }
+
+        &__block {
+            display: flex;
+            flex-direction: row;
+            gap: 3rem;
+            justify-content: space-between;
+
+            @media (max-width: 600px) {
+                flex-direction: column;
+                align-items: start;
+                gap: 1rem
+            }
+
+            &--label {
+                display: block;
+                font-size: 2.5rem;
+                color: var(--gray-color-3);
+            }
+
+            &--input {
+                border: 0;
+                border-bottom: 1px solid var(--gray-color-1);
+                font-size: 2rem;
+                font-family: var(--font-family);
+                color: var(--input-text-color);
+                background-color: transparent;
+                padding: 0.5rem;
+                transform: translateY(-0.5rem);
+
+                @media (max-width: 600px) {
+                    transform: none;
+                }
+
+                &::-webkit-inner-spin-button {
+                    appearance: none;
+                    margin: 0;
+                }
+
+                &::placeholder {
+                    color: var(--gray-color-2);
+                }
+
+                &:hover, &:focus {
+                    border-color: var(--black-color-2);
+                }
+            }
+        }
+
+        &__buttons {
+            display: flex;
+            justify-content: space-around;
+            gap: 3rem;
+            margin-top: 4.5rem;
+        }
+
+        &__button {
+            font-size: 3.5rem;
+            border-radius: 1.25rem;
+            padding: 0.75rem 1.5rem;
+            border: 0;
+            font-family: var(--font-family);
+            color: var(--white-color-1);
+
+            &:not(:disabled) {
+                cursor: pointer;
+            }
+
+            &--primary {
+                background-color: $blue-color-1;
+
+                &:not(:disabled) {
+                    &:hover, &:focus {
+                        background-color: color.scale($blue-color-1, $lightness: -20%);
+                    }
+                }
+
+                &:disabled {
+                    background-color: color.scale($blue-color-1, $lightness: 20%);
+                }
+            }
+
+            &--secondary {
+                background-color: var(--gray-color-1);
+
+                &:hover, &:focus {
+                    background-color: var(--gray-color-2);
+                }
+            }
+        }
+    }
+}

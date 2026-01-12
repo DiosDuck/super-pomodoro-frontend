@@ -1,0 +1,10 @@
+<div class='status'>
+    <h1 class="status__title">Status page</h1>
+    <div class='status__list'>
+    @for (status of statusList; track $index) {
+        <app-status-line
+            [status]="status"
+        />
+    }
+    </div>
+</div>

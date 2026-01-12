@@ -1,0 +1,29 @@
+<div class="form-page">
+    <h1 class="form-page-title">Register</h1>
+    <form class="form-page-form" [formGroup]="registerForm" (submit)="onSubmit()">
+        <div class="form-page-form__block">
+            <label for="username" class="form-page-form__block--label">Username</label>
+            <input id="username" type="text" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('username')" formControlName="username" placeholder="username" autocomplete="off">
+        </div>
+        <div class="form-page-form__block">
+            <label for="password" class="form-page-form__block--label">Password</label>
+            <input id="password" type="password" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('password')" formControlName="password" placeholder="password" autocomplete="off">
+        </div>
+        <div class="form-page-form__block">
+            <label for="confirmPassword" class="form-page-form__block--label">Confirm Password</label>
+            <input id="confirmPassword" type="password" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('confirmPassword')" formControlName="confirmPassword" placeholder="confirmPassword" autocomplete="off">
+        </div>
+        <div class="form-page-form__block">
+            <label for="name" class="form-page-form__block--label">Name</label>
+            <input id="name" type="text" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('name')" formControlName="name" placeholder="name" autocomplete="off">
+        </div>
+        <div class="form-page-form__block">
+            <label for="enail" class="form-page-form__block--label">Email</label>
+            <input id="email" type="text" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('email')" formControlName="email" placeholder="email" autocomplete="off">
+        </div>
+        <div class="form-page-form__buttons">
+            <button type="button" class="form-page-form__button form-page-form__button--secondary" (click)="onBack()">Go back</button>
+            <button type="submit" class="form-page-form__button form-page-form__button--primary" [disabled]="!registerForm.valid && !isWaiting">Register</button>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,72 @@
+<div class="pomodoro">
+    <audio class="pomodoro-audio" #audio>
+        <source src="assets/audio/alarm-clock.mp3" type="audio/mpeg">
+    </audio>
+    <h1 class="pomodoro-title">{{ header() }}</h1>
+    <div class="pomodoro-display">
+        <div class="pomodoro-display__timer">{{ minutes() }}:{{ seconds() }}</div>
+        <div class="pomodoro-display__cycles">Number of cycles done: {{ this.numberOfCycles() }}</div>
+    </div>
+    <div class="pomodoro-buttons">
+        @if (isWaitingFormConfirmation()) {
+           <button class="pomodoro-button" (click)="onNext()">
+                <svg class="pomodoro-button__icon">
+                    <use xlink:href="assets/icons/sprite.svg#icon-next"></use>
+                </svg>
+            </button>
+            <button class="pomodoro-button" [disabled]="true">
+                <span class="pomodoro-button__text">+5</span>
+            </button>
+            <button class="pomodoro-button" [disabled]="true">
+                <span class="pomodoro-button__text">+15</span>
+            </button>
+        }
+        @else if (!timerStarted()) {
+            <button class="pomodoro-button" (click)="onStart()">
+                <svg class="pomodoro-button__icon">
+                    <use xlink:href="assets/icons/sprite.svg#icon-play"></use>
+                </svg>
+            </button>
+            <button class="pomodoro-button" (click)="onRewind()">
+                <svg class="pomodoro-button__icon">
+                    <use xlink:href="assets/icons/sprite.svg#icon-rewind"></use>
+                </svg>
+            </button>
+            <button class="pomodoro-button" (click)="onReset()">
+                <svg class="pomodoro-button__icon">
+                    <use xlink:href="assets/icons/sprite.svg#icon-reset"></use>
+                </svg>
+            </button>
+        }
+        @else {
+            <button class="pomodoro-button" (click)="onStop()">
+                <svg class="pomodoro-button__icon">
+                    <use xlink:href="assets/icons/sprite.svg#icon-pause"></use>
+                </svg>
+            </button>
+            @if (cycleState() === 'work') {
+                <button class="pomodoro-button" (click)="onIncrement(5)">
+                    <span class="pomodoro-button__text">+5</span>
+                </button>
+                <button class="pomodoro-button" (click)="onIncrement(15)">
+                    <span class="pomodoro-button__text">+15</span>
+                </button>
+            }
+            @else {
+                <button class="pomodoro-button" (click)="onNext()">
+                    <svg class="pomodoro-button__icon">
+                        <use xlink:href="assets/icons/sprite.svg#icon-next"></use>
+                    </svg>
+                </button>
+                <button class="pomodoro-button" [disabled]="true">
+                    <span class="pomodoro-button__text">+5</span>
+                </button>
+            }
+        }
+        <button class="pomodoro-button" routerLink="/pomodoro/settings" [disabled]="sessionStarted()">
+            <svg class="pomodoro-button__icon">
+                <use xlink:href="assets/icons/sprite.svg#icon-settings"></use>
+            </svg>
+        </button>
+    </div>
+</div>

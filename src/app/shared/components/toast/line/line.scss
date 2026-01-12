@@ -1,0 +1,60 @@
+@use "sass:color";
+
+.toast-line {
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-between;
+    width: 27rem;
+    padding: 1rem;
+
+    border: 0.5rem solid var(--black-color-1);
+    background-color: var(--white-color-1);
+    animation: fadeIn ease 1s;
+
+    &--closing {
+        animation: fadeOut ease 1s forwards;
+    }
+
+    &__message {
+        font-size: 3rem;
+        // 27 rem - 2*1 rem gap - 2*3rem icons
+        max-width: 19rem;
+        color: var(--black-color-1);
+    }
+
+    &__icon {
+        width: 3rem;
+        height: 3rem;
+        align-self: flex-start;
+        fill: var(--black-color-1);
+
+        &--close {
+            align-self: flex-start;
+            &:hover {
+                fill: var(--gray-color-2);
+            }
+        }
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+    
+    100% {
+        opacity: 0;
+    }
+}

@@ -1,0 +1,76 @@
+$color-waiting: #999;
+$color-success: #4BB543;
+$color-warning: #ffa700;
+$color-error: #D90202;
+
+$color-message: #665;
+
+.status-line {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 2rem;
+
+    font-size: 2.5rem;
+
+    &__title, &__result {
+        width: calc(50% - 1rem);
+    }
+
+    &__title {
+        text-align: right;
+    }
+
+    &__result {
+        padding-left: 2.5rem;
+        position: relative;
+
+        &--message {
+            font-size: 1.5rem;
+            color: $color-message;
+        }
+    }
+
+    &__waiting {
+        color: $color-waiting;
+
+        &::before {
+            background-color: $color-waiting;
+        }
+    }
+
+    &__success {
+        color: $color-success;
+
+        &::before {
+            background-color: $color-success;
+        }
+    }
+
+    &__warning {
+        color: $color-warning;
+
+        &::before {
+            background-color: $color-warning;
+        }
+    }
+
+    &__error {
+        color: $color-error;
+
+        &::before {
+            background-color: $color-error;
+        }
+    }
+
+    &__waiting::before, &__success::before, &__warning::before, &__error::before {
+        content: "";
+        position: absolute;
+        left: 0.625rem;
+        top: 0.625rem;
+            
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: 100%;
+    }
+}

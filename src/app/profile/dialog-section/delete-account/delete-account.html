@@ -1,0 +1,12 @@
+<div class="form-page">
+    <h3 class="form-page-info">Caution! This operation cannot be reverted!</h3>
+    <form class="form-page-form" [formGroup]="deleteAccountForm" (submit)="onSubmit()">
+        <div class="form-page-form__block">
+            <label for="password" class="form-page-form__block--label">Password</label>
+            <input id="password" type="password" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('password')" formControlName="password" placeholder="Password" autocomplete="off">
+        </div>
+        <div class="form-page-form__buttons">
+            <button type="submit" class="form-page-form__button form-page-form__button--danger" [disabled]="!deleteAccountForm.valid && !isWaiting">Delete account</button>
+        </div>
+    </form>
+</div>

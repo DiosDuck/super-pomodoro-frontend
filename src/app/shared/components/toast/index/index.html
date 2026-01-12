@@ -1,0 +1,5 @@
+<div class="toast">
+    @for (toast of toastList(); track toast.id) {
+        <app-toast-line [toast]="toast" (close)="deleteToast($event)"/>
+    }
+</div>
