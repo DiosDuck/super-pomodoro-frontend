@@ -50,4 +50,9 @@
             transform: rotate(-25deg);
         }
     }
+
+    &-not-found {
+        font-size: 2.5rem;
+        color: var(--gray-color-4);
+    }
 }

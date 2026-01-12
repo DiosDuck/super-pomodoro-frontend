@@ -29,7 +29,7 @@ export const routes: Routes = [
     },
     {
         path: 'profile',
-        canMatch: [signedGuard],
+        canActivate: [signedGuard],
         loadChildren: () => import('./profile/profile.routes').then(m => m.PROFILE_ROUTES),
     },
     {

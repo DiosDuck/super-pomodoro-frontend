@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Index as Navbar } from "./shared/components/navbar/index/index";
 import { RouterOutlet } from '@angular/router';
 import { Index as Toast } from './shared/components/toast/index';
+import { LoaderService } from './shared/services/loader';
 
 @Component({
   selector: 'app-root',
@@ -11,5 +12,5 @@ import { Index as Toast } from './shared/components/toast/index';
 
 })
 export class App {
-  protected title = 'frontend';
+  loaderService = inject(LoaderService);
 }

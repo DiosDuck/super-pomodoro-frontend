@@ -1,5 +1,10 @@
 <app-navbar/>
 <app-toast/>
+@if (loaderService.loader()) {
+  <div class="loading">
+    <span class="loading-spinner"></span>
+  </div>
+}
 <main>
   <router-outlet />
 </main>
