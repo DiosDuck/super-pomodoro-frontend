@@ -17,7 +17,7 @@
         <div class="session-chart-footer">
             @for (workSessionHistory of workSessionHistoryList(); track $index) {
                 <div class="session-chart-footer__date">
-                    {{ workSessionHistory.timestamp | date: 'YYY-MM-dd' }}
+                    {{ workSessionHistory.timestamp | date: 'yyyy-MM-dd' }}
                 </div>
             }
         </div>
