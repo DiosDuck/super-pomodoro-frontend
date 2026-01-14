@@ -39,7 +39,7 @@ export class Index implements OnInit, OnDestroy {
   timerStarted = signal<boolean>(false);
   sessionStarted = signal<boolean>(false);
   isWaitingFormConfirmation = this.counterService.waitingConfirmation;
-  alarm = viewChild.required<ElementRef<HTMLAudioElement>>('audio');
+  alarm : HTMLAudioElement | null = null;
 
   titleValue = computed(
     () => {
@@ -66,6 +66,7 @@ export class Index implements OnInit, OnDestroy {
 
   ngOnInit(): void 
   {
+    this.alarm = new Audio('assets/audio/alarm-clock.mp3');
     this.counterService.cycle.subscribe((cycle) => {
       this.cycleState.set(cycle.currentCycle);
       this.numberOfCycles.set(cycle.currentNumberOfCycle - 1);
@@ -79,14 +80,17 @@ export class Index implements OnInit, OnDestroy {
         this.timerStarted.set(false);
         this.sessionStarted.set(false);
       } else {
-        this.alarm().nativeElement.currentTime = 0;
-        this.alarm().nativeElement.play();
+        if (this.alarm) {
+          this.alarm.currentTime = 0;
+          this.alarm.play();
+        }
       }
     })
   }
 
   ngOnDestroy(): void {
     this.counterService.pomodoroRewind();
+    this.alarm = null;
   }
 
   async onStart(): Promise<void>
@@ -110,7 +114,7 @@ export class Index implements OnInit, OnDestroy {
   {
     this.timerStarted.set(false);
     this.sessionStarted.set(false);
-    this.alarm().nativeElement.pause();
+    this.alarm?.pause();
     await this.counterService.pomodoroNext();
   }
 
