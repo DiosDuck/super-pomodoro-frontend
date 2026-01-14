@@ -1,7 +1,7 @@
 <div class="nav-bubble" [class.nav-bubble--active]="isActivating()">
     <button class="nav-bubble-hamburger" (click)="toggle()">
         <svg class="nav-bubble-hamburger__icon">
-            <use [attr.xlink:href]="'#icon-' + currentIcon()"></use>
+            <use [attr.xlink:href]="'assets/icons/sprite.svg#icon-' + currentIcon()"></use>
         </svg>
     </button>
     @if (this.isDisplayed()) {
