@@ -1,9 +1,10 @@
 export interface StatusRequest {
     name: string,
     url: string,
+    type: 'value' | 'health',
 };
 
 export interface StatusResponse {
-    message?: string,
-    status: -1|0|1|2
+    message: string,
+    status: 'HOLD' | 'OK' | 'WARN' | 'CRIT',
 }

@@ -1,6 +1,6 @@
 import { Component, effect, input, signal, computed } from '@angular/core';
-import { StatusRequest, StatusResponse } from '../models/status';
-import { StatusService } from '../services/status-service';
+import { StatusRequest, StatusResponse } from '../../models/status';
+import { StatusService } from '../../services/status-service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -12,20 +12,20 @@ import { CommonModule } from '@angular/common';
 export class Line {
   status = input.required<StatusRequest>();
 
-  response = signal<StatusResponse>({status: -1});
+  response = signal<StatusResponse>({status: 'HOLD', message: 'Waiting...'});
   responseStatus = computed<'waiting'|'success'|'warning'|'error'>(
     () => {
       switch(this.response().status) {
-        case -1: {
+        case 'HOLD': {
           return 'waiting';
         }
-        case 0: {
+        case 'OK': {
             return 'success';
         }
-        case 1: {
+        case 'WARN': {
           return 'warning';
         }
-        case 2: {
+        case 'CRIT': {
           return 'error';
         }
       }
@@ -45,7 +45,7 @@ export class Line {
           if ('status' in err.error) {
             this.response.set(err.error);
           } else {
-            this.response.set({status: 2});
+            this.response.set({status: 'CRIT', message: 'Http Error'});
           }
         },
       });

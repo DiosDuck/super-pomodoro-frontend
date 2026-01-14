@@ -1,0 +1,25 @@
+<div class="status-line">
+    <div class="status-line__title">{{ status().name }}</div>
+    <div class="status-line__result" 
+        [class]="'status-line__' + responseStatus()"
+        [class.status-line--value]="status().type === 'value'"
+        >
+        @switch (responseStatus()) {
+            @case ('waiting') {
+                <div class="status-line__result--status">{{ response().status }}</div>
+            }
+            @case ('success') {
+                @if (status().type === 'value') {
+                    <div class="status-line__result--status">{{ response().message }}</div>
+                }
+                @else {
+                    <div class="status-line__result--status">{{ response().status }}</div>
+                }
+            }
+            @default {
+                <div class="status-line__result--status">{{ responseStatus() }}</div>
+                <div class="status-line__result--message">{{ response().message }}</div>
+            }
+        }
+    </div>
+</div>

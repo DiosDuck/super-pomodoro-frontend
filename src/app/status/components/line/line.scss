@@ -14,6 +14,7 @@ $color-message: #665;
     font-size: 2.5rem;
 
     &__title, &__result {
+        color: var(--gray-color-2);
         width: calc(50% - 1rem);
     }
 
@@ -29,6 +30,10 @@ $color-message: #665;
             font-size: 1.5rem;
             color: $color-message;
         }
+
+        &--value {
+            color: var(--black-color-2);
+        }
     }
 
     &__waiting {
@@ -39,12 +44,17 @@ $color-message: #665;
         }
     }
 
-    &__success {
+     &__success:not(&--value) {
         color: $color-success;
 
         &::before {
             background-color: $color-success;
         }
+    }
+
+    &__success:is(&--value) {
+        color: var(--black-color-1);
+        transform: translateX(calc(-2.5rem + 0.625rem));
     }
 
     &__warning {
@@ -63,7 +73,7 @@ $color-message: #665;
         }
     }
 
-    &__waiting::before, &__success::before, &__warning::before, &__error::before {
+    &__waiting::before, &__success:not(&--value)::before, &__warning::before, &__error::before {
         content: "";
         position: absolute;
         left: 0.625rem;
