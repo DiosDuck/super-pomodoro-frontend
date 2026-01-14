@@ -1,4 +1,4 @@
-import { inject, Injectable, signal, Signal, WritableSignal } from '@angular/core';
+import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { LocalStorageService } from '../shared/services/local-storage';
 import { Cycle, cycleType, Settings, SettingsHttp } from './pomodoro.model';
 import { BehaviorSubject, firstValueFrom, interval, Observable, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile } from 'rxjs';
