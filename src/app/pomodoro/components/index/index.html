@@ -8,7 +8,7 @@
         @if (isWaitingFormConfirmation()) {
            <button class="pomodoro-button" (click)="onNext()">
                 <svg class="pomodoro-button__icon">
-                    <use xlink:href="assets/icons/sprite.svg#icon-next"></use>
+                    <use xlink:href="#icon-next"></use>
                 </svg>
             </button>
             <button class="pomodoro-button" [disabled]="true">
@@ -21,24 +21,24 @@
         @else if (!timerStarted()) {
             <button class="pomodoro-button" (click)="onStart()">
                 <svg class="pomodoro-button__icon">
-                    <use xlink:href="assets/icons/sprite.svg#icon-play"></use>
+                    <use xlink:href="#icon-play"></use>
                 </svg>
             </button>
             <button class="pomodoro-button" (click)="onRewind()">
                 <svg class="pomodoro-button__icon">
-                    <use xlink:href="assets/icons/sprite.svg#icon-rewind"></use>
+                    <use xlink:href="#icon-rewind"></use>
                 </svg>
             </button>
             <button class="pomodoro-button" (click)="onReset()">
                 <svg class="pomodoro-button__icon">
-                    <use xlink:href="assets/icons/sprite.svg#icon-reset"></use>
+                    <use xlink:href="#icon-reset"></use>
                 </svg>
             </button>
         }
         @else {
             <button class="pomodoro-button" (click)="onStop()">
                 <svg class="pomodoro-button__icon">
-                    <use xlink:href="assets/icons/sprite.svg#icon-pause"></use>
+                    <use xlink:href="#icon-pause"></use>
                 </svg>
             </button>
             @if (cycleState() === 'work') {
@@ -52,7 +52,7 @@
             @else {
                 <button class="pomodoro-button" (click)="onNext()">
                     <svg class="pomodoro-button__icon">
-                        <use xlink:href="assets/icons/sprite.svg#icon-next"></use>
+                        <use xlink:href="#icon-next"></use>
                     </svg>
                 </button>
                 <button class="pomodoro-button" [disabled]="true">
@@ -62,7 +62,7 @@
         }
         <button class="pomodoro-button" routerLink="/pomodoro/settings" [disabled]="sessionStarted()">
             <svg class="pomodoro-button__icon">
-                <use xlink:href="assets/icons/sprite.svg#icon-settings"></use>
+                <use xlink:href="#icon-settings"></use>
             </svg>
         </button>
     </div>
