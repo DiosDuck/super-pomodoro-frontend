@@ -26,7 +26,7 @@ export class SettingsService {
 
   loadSettings(): void 
   {
-    this._userService.user
+    this._userService.waitFirstUser()
       .pipe(
         switchMap(
           user => user === null ? this.loadLocalStorageSettings() : this.loadUserSettings()
@@ -42,9 +42,8 @@ export class SettingsService {
 
   updateSettings(settings: Settings): void 
   {
-    this._userService.user
+    this._userService.waitFirstUser()
       .pipe(
-        take(1),
         switchMap(
           user => user === null ? this.updateLocalStorageSettings(settings) : this.updateUserSettings(settings) 
         )
@@ -77,7 +76,7 @@ export class SettingsService {
     try {
       await firstValueFrom(this._http.put('/api/pomodoro/settings', settingsHttp));
     } catch (err) {
-      this._toastService.addToast('Error creating settings, please refresh the page', 'error');
+      this._toastService.addToast('Error creating settings, please refresh the page', 'error', 10);
     }
 
     return settings;
@@ -100,7 +99,7 @@ export class SettingsService {
     try {
       await firstValueFrom(this._http.post('/api/pomodoro/settings', settingsHttp));
     } catch (err) {
-      this._toastService.addToast('Error on saving the settings, please try again!', 'error');
+      this._toastService.addToast('Error on saving the settings, please try again!', 'error', 10);
     }
 
     return settings;

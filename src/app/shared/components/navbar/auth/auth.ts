@@ -24,10 +24,10 @@ export class Auth implements OnInit {
     this.userService.user.subscribe(user => this.user.set(user));
   }
 
-  async onLogout(): Promise<void>
+  onLogout(): void
   {
     this.userService.logout();
-    await this.lastRouteService.redirectToLastRoute();
+    this.lastRouteService.redirectToLastRoute();
   }
 
   saveCurrentUrl(): void

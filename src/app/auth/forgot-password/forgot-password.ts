@@ -31,7 +31,7 @@ export class ForgotPassword {
                     if (error.status === 429) {
                         this.toastService.addToast("Too many attempts, please wait", "error");
                     } else {
-                        this.toastService.addToast("If the username exist, check your inbox!", "success");
+                        this.toastService.addToast("If the username exist, check your inbox!", "success", 10);
                     }
 
                     return throwError(() => error);
@@ -39,7 +39,7 @@ export class ForgotPassword {
                 finalize(() => this.isWaiting = false),
             )
             .subscribe(() => {
-                this.toastService.addToast("If the username exist, check your inbox!", "success");
+                this.toastService.addToast("If the username exist, check your inbox!", "success", 10);
             })
         ;
     }

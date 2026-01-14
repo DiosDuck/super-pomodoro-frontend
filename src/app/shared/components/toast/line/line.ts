@@ -13,7 +13,6 @@ export class Line implements OnInit{
     private _observableFinish = this._finish.asObservable();
 
     toast = input.required<Toast>();
-    timeUp = input<number>(5);
     close = output<number>();
     icon = computed(() => {
       switch (this.toast().status) {
@@ -27,7 +26,7 @@ export class Line implements OnInit{
     });
 
     ngOnInit(): void {
-      timer(this.timeUp() * 1000)
+      timer(this.toast().time * 1000)
         .pipe(
           takeUntil(this._observableFinish)
         )

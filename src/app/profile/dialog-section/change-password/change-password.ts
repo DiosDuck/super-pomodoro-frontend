@@ -45,13 +45,13 @@ export class ChangePassword {
       .subscribe(
         {
           next: () => {
-            this.toastService.addToast('Password has been changed, please log in.', 'note');
+            this.toastService.addToast('Password has been changed, please log in.', 'note', 10);
             this.userService.logout();
             this.lastRouteService.updateLastRoute('/');
             this.router.navigateByUrl('/auth/sign-in');
           },
           error: () => {
-            this.toastService.addToast('Wrong password, please introduce it again.', 'error');
+            this.toastService.addToast('Wrong password, please introduce it again.', 'error', 10);
           }
         }
       )

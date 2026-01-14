@@ -22,7 +22,7 @@ export const verifyEmailRegisterGuard: CanActivateFn = (
     http.post('/api/auth/register/verify-email', tokenVerification)
         .subscribe({
             next: () => toastService.addToast('User is now active', 'success'),
-            error: () => toastService.addToast('There has been an error with activating the user, please try again', 'error'),
+            error: () => toastService.addToast('There has been an error with activating the user, please try again', 'error', 10),
         })
     ;
 

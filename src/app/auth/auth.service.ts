@@ -18,7 +18,7 @@ export class AuthService {
     {
         try {
             const res = await firstValueFrom(this._http.post<TokenResponse>('/api/auth/login', loginData));
-            this._userService.loadUser(res.token);
+            await this._userService.loadUser(res.token);
         } catch (err) {
             throw err;
         }

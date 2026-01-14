@@ -49,7 +49,7 @@ export class Register {
         take(1),
         catchError((error: HttpErrorResponse) => {
           if (error.status === 429) {
-            this.toastService.addToast("Too many register attempts in short time, please wait", "error");
+            this.toastService.addToast("Too many register attempts in short time, please wait", "error", 10);
           } else {
             this.errorRegister = true;
             this.registerForm.markAllAsTouched();
@@ -61,7 +61,7 @@ export class Register {
       )
       .subscribe({
         next: () => {
-          this.toastService.addToast("Check the inbox to activate the account", "note");
+          this.toastService.addToast("Check the inbox to activate the account", "note", 10);
           this.router.navigateByUrl('/auth/sign-in');
         },
         error: (err) => this.isWaiting = false,

@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { firstValueFrom, ReplaySubject } from 'rxjs';
+import { filter, firstValueFrom, Observable, ReplaySubject, take } from 'rxjs';
 import { User, nullableUser } from '../models/user';
 import { CookieService } from 'ngx-cookie-service';
 
@@ -13,6 +13,11 @@ export class UserService {
 
     private _http = inject(HttpClient);
     private _userToken = inject(UserToken);
+
+    waitFirstUser() : Observable<nullableUser>
+    {
+        return this.user.pipe(filter(user => undefined !== user), take(1));
+    }
 
     logout(): void
     {

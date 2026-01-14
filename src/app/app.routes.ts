@@ -5,6 +5,7 @@ export const routes: Routes = [
     {
         path: 'status',
         canActivate: [adminGuard],
+        runGuardsAndResolvers: 'always',
         title: 'Status page',
         loadComponent: () => import('./status/index/index').then(m => m.Index),
     },
@@ -25,11 +26,13 @@ export const routes: Routes = [
     },
     {
         path: 'auth',
+        runGuardsAndResolvers: 'always',
         loadChildren: () => import('./auth/auth.routes').then(m => m.AUTH_ROUTES),
     },
     {
         path: 'profile',
         canActivate: [signedGuard],
+        runGuardsAndResolvers: 'always',
         loadChildren: () => import('./profile/profile.routes').then(m => m.PROFILE_ROUTES),
     },
     {

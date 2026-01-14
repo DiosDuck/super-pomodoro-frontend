@@ -10,12 +10,13 @@ export class ToastService {
 
     toastList = this._toastList.asReadonly();
 
-    addToast(message: string, status: status = "note"): number 
+    addToast(message: string, status: status = "note", time: number = 5): number 
     {
         let toast : Toast = {
             id: ++this._index,
             message: message,
             status: status,
+            time: time,
         }
         this._toastList.set(this._toastList().concat(toast));
 

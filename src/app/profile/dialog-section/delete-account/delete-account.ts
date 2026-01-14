@@ -45,7 +45,7 @@ export class DeleteAccount {
                     this.router.navigateByUrl('/auth/sign-in');
                 },
                 error: () => {
-                    this.toastService.addToast('Wrong password, please introduce it again.', 'error');
+                    this.toastService.addToast('Wrong password, please introduce it again.', 'error', 10);
                 }
             })
         ;
