@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { filter, firstValueFrom, Observable, ReplaySubject, take } from 'rxjs';
 import { User, nullableUser } from '../models/user';
-import { CookieService } from 'ngx-cookie-service';
+import { LocalStorageService } from './local-storage';
 
 @Injectable({
   providedIn: 'root'
@@ -57,26 +57,25 @@ export class UserService {
 })
 export class UserToken {
     private readonly _key = 'token';
-    private _cookieService = inject(CookieService);
+    private _localStorageService = inject(LocalStorageService);
 
     get(): string | null
     {
-        return this._cookieService.check(this._key) 
-            ? this._cookieService.get(this._key) : null;
+        return this._localStorageService.get(this._key);
     }
 
     set(token : string) : void
     {
-        this._cookieService.set(this._key, token);
+        this._localStorageService.set(this._key, token);
     }
 
     isSet() : boolean
     {
-        return this._cookieService.check(this._key);
+        return this._localStorageService.get(this._key) !== null;
     }
 
     remove() : void
     {
-        this._cookieService.delete(this._key);
+        this._localStorageService.remove(this._key);
     }
 }
