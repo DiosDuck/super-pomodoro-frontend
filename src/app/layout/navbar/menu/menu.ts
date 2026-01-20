@@ -1,10 +1,10 @@
-import { Component, inject, OnInit, output, signal, WritableSignal } from '@angular/core';
+import { Component, inject, OnInit, output, signal } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
-import { NAV_MENU_ITEMS } from '../../../configs/nav-items';
-import { UserService } from '../../../services/user';
-import { LoggedInPipe } from '../../../pipes/user';
-import { navId } from '../../navbar.config';
-import { nullableUser } from '../../../models/user';
+import { LoggedInPipe } from '../../../shared/pipes/user';
+import { UserService } from '../../../shared/services/user';
+import { nullableUser } from '../../../shared/models/user';
+import { NAV_MENU_ITEMS } from '../../../shared/configs/nav-items';
+import { navId } from '../navbar.model';
 
 @Component({
   selector: 'app-nav-menu',

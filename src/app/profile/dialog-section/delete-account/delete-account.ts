@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { UserService } from "../../../shared/services/user";
 import { UpdateUserService } from "../../profile.services";
 import { LastRouteService } from "../../../shared/services/last-route";
-import { ToastService } from "../../../shared/services/toast";
+import { ToastService } from "../../../shared/utils/toast.service";
 import { Router } from "@angular/router";
 import { finalize, take } from "rxjs";
 

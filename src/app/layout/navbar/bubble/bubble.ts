@@ -1,5 +1,5 @@
 import { Component, computed, input, OnInit, output, signal } from '@angular/core';
-import { navId } from '../../navbar.config';
+import { navId } from '../navbar.model';
 import { Observable, timer } from 'rxjs';
 
 @Component({

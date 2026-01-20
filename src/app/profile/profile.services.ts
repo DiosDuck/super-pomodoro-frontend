@@ -1,7 +1,20 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { inject, Injectable } from "@angular/core";
 import { Observable } from "rxjs";
-import { WorkTimeHistoryResponse } from "./profile.models";
+
+export type DialogForm = 'change-password' | 'delete-account' | null;
+
+export interface WorkTimeHistoryResponse {
+    workTimeTotal: number,
+    sessionAmount: number,
+    timestamp: number,
+}
+
+export interface WorkTimeHistory {
+    workTimeTotal: number,
+    sessionAmount: number,
+    date: Date,
+}
 
 @Injectable({
     providedIn: 'root'

@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from "@angular/core";
-import { NavItem } from "../components/navbar/models/nav-elems";
+import { NavItem } from "../../layout/navbar/navbar.model";
 import { nullableUser } from "../models/user";
 
 @Pipe({

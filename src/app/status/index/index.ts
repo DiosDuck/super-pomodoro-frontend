@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { STATUS_LIST } from '../../config';
+import { STATUS_LIST } from '../config';
 import { Line } from '../line/line';
 
 @Component({

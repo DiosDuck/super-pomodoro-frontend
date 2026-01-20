@@ -1,9 +1,9 @@
 import { Component, inject, OnInit, output, signal } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
-import { UserService } from '../../../services/user';
-import { LastRouteService } from '../../../services/last-route';
-import { navId } from '../../navbar.config';
-import { nullableUser } from '../../../models/user';
+import { UserService } from '../../../shared/services/user';
+import { LastRouteService } from '../../../shared/services/last-route';
+import { nullableUser } from '../../../shared/models/user';
+import { navId } from '../navbar.model';
 
 @Component({
   selector: 'app-nav-auth',

@@ -1,7 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../auth.service';
-import { ToastService } from '../../shared/services/toast';
+import { ToastService } from '../../shared/utils/toast.service';
 import { LastRouteService } from '../../shared/services/last-route';
 import { RouterLink } from "@angular/router";
 

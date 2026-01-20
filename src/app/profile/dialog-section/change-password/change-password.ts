@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { passwordMatchValidator } from "../../../shared/validator/password-match";
 import { UserService } from "../../../shared/services/user";
-import { ToastService } from "../../../shared/services/toast";
+import { ToastService } from "../../../shared/utils/toast.service";
 import { UpdateUserService } from "../../profile.services";
 import { finalize, take } from "rxjs";
 import { LastRouteService } from "../../../shared/services/last-route";

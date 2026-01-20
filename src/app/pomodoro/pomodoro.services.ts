@@ -1,10 +1,31 @@
 import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
 import { LocalStorageService } from '../shared/services/local-storage';
-import { Cycle, cycleType, Settings, SettingsHttp } from './pomodoro.model';
 import { BehaviorSubject, firstValueFrom, interval, Observable, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile } from 'rxjs';
 import { UserService } from '../shared/services/user';
 import { HttpClient } from '@angular/common/http';
-import { ToastService } from '../shared/services/toast';
+import { ToastService } from '../shared/utils/toast.service';
+
+export interface SettingsHttp {
+    workTime: number,
+    shortBreakTime: number,
+    longBreakTime: number,
+    cyclesBeforeLongBreak: number,
+    maxConfirmationTime: number,
+}
+
+export interface Settings extends SettingsHttp {
+    type: 'pomodoro.settings',
+}
+
+export type cycleType = 'idle' | 'work' | 'short-break' | 'long-break';
+
+export interface Cycle {
+    currentCycle: cycleType,
+    currentNumberOfCycle: number,
+    dateTime: Date,
+    type: 'pomodoro.cycle',
+}
+
 
 @Injectable({
   providedIn: 'root'

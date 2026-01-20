@@ -1,6 +1,5 @@
 import { Component, effect, input, signal, computed } from '@angular/core';
-import { StatusRequest, StatusResponse } from '../../models/status';
-import { StatusService } from '../../services/status-service';
+import { StatusService, StatusRequest, StatusResponse } from '../status.service';
 import { CommonModule } from '@angular/common';
 
 @Component({

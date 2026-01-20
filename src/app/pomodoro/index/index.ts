@@ -1,8 +1,7 @@
-import { Component, computed, ElementRef, inject, OnDestroy, OnInit, signal, viewChild } from '@angular/core';
-import { CounterService } from '../../pomodoro.services';
+import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
+import { CounterService, cycleType } from '../pomodoro.services';
 import { RouterLink } from "@angular/router";
 import { Title } from '@angular/platform-browser';
-import { cycleType } from '../../pomodoro.model';
 
 @Component({
   selector: 'app-pomodoro-index',

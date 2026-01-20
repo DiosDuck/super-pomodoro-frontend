@@ -7,7 +7,7 @@ export const routes: Routes = [
         canActivate: [adminGuard],
         runGuardsAndResolvers: 'always',
         title: 'Status page',
-        loadComponent: () => import('./status/components/index/index').then(m => m.Index),
+        loadComponent: () => import('./status/index/index').then(m => m.Index),
     },
     {
         path: '',

@@ -1,7 +1,7 @@
-import { Component, inject, OnInit } from '@angular/core';
-import { Index as Navbar } from "./shared/components/navbar/index/index";
+import { Component, inject } from '@angular/core';
+import { Index as Navbar } from "./layout/navbar/index/index";
 import { RouterOutlet } from '@angular/router';
-import { Index as Toast } from './shared/components/toast/index';
+import { Index as Toast } from './layout/toast/index/index';
 import { LoaderService } from './shared/services/loader';
 
 @Component({

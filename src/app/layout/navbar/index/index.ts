@@ -2,8 +2,8 @@ import { Component, inject, signal } from '@angular/core';
 import { Menu } from "../menu/menu";
 import { Auth } from '../auth/auth';
 import { Bubble } from "../bubble/bubble";
-import { LastRouteService } from '../../../services/last-route';
-import { navId } from '../../navbar.config';
+import { LastRouteService } from '../../../shared/services/last-route';
+import { navId } from '../navbar.model';
 import { BehaviorSubject } from 'rxjs';
 
 @Component({

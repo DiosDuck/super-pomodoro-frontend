@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router } from '@angular/router';
 import { passwordMatchValidator } from '../../shared/validator/password-match';
 import { AuthService } from '../auth.service';
-import { ToastService } from '../../shared/services/toast';
+import { ToastService } from '../../shared/utils/toast.service';
 import { LastRouteService } from '../../shared/services/last-route';
 import { catchError, take, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';

@@ -4,7 +4,7 @@ import { ActivatedRoute } from "@angular/router";
 import { ResetPasswordService } from "../verify-email.services";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { passwordMatchValidator } from "../../../shared/validator/password-match";
-import { ToastService } from "../../../shared/services/toast";
+import { ToastService } from "../../../shared/utils/toast.service";
 import { finalize, take } from "rxjs";
 import { LastRouteService } from "../../../shared/services/last-route";
 

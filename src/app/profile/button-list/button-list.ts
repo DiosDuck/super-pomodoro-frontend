@@ -1,5 +1,5 @@
 import { Component, signal } from "@angular/core";
-import { DialogForm } from "../profile.models";
+import { DialogForm } from "../profile.services";
 import { ChangePassword } from "../dialog-section/change-password/change-password";
 import { DeleteAccount } from "../dialog-section/delete-account/delete-account";
 

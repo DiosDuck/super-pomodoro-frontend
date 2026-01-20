@@ -1,3 +1,10 @@
+export interface NavItem {
+    name: string,
+    url: string,
+    loggedIn: boolean,
+    adminRequired: boolean,
+}
+
 export const NAV_MENU_ID = 'nav-menu';
 export const NAV_AUTH_ID = 'nav-auth';
 

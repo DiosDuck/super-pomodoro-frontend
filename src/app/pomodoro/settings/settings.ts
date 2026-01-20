@@ -1,8 +1,7 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { SettingsService } from "../../pomodoro.services";
+import { SettingsService, Settings as SettingsModel } from "../pomodoro.services";
 import { Router, RouterLink } from "@angular/router";
-import { Settings as SettingsModel } from "../../pomodoro.model";
 
 @Component({
     templateUrl: "settings.html",

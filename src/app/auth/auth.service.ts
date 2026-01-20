@@ -3,7 +3,14 @@ import { Injectable } from '@angular/core';
 import { firstValueFrom, Observable } from 'rxjs';
 import { UserService } from '../shared/services/user';
 import { LoginData, TokenResponse } from '../shared/models/user';
-import { RegisterData } from './register.model';
+
+export interface RegisterData {
+    username: string,
+    password: string,
+    email: string,
+    displayName: string,
+}
+
 
 @Injectable({
   providedIn: 'root'

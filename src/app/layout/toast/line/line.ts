@@ -1,6 +1,6 @@
 import { Component, computed, input, OnInit, output, signal } from "@angular/core";
-import { Toast } from "../../../models/toast";
-import { BehaviorSubject, delay, interval, Subject, takeUntil, takeWhile, timer } from "rxjs";
+import { Toast } from "../../../shared/utils/toast.service";
+import { Subject, takeUntil, timer } from "rxjs";
 
 @Component({
   selector: 'app-toast-line',

@@ -1,8 +1,8 @@
 import { inject } from "@angular/core";
 import { CanActivateChildFn, CanActivateFn, Router } from "@angular/router";
 import { UserService } from "../services/user";
-import { filter, map, take } from "rxjs";
-import { ToastService } from "../services/toast";
+import { map } from "rxjs";
+import { ToastService } from "../utils/toast.service";
 import { LastRouteService } from "../services/last-route";
 
 export const unsignedGuard: CanActivateChildFn = () => {

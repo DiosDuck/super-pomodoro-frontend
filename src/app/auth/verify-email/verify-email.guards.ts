@@ -1,7 +1,7 @@
 import { inject } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from "@angular/router";
 import { UserService } from "../../shared/services/user";
-import { ToastService } from "../../shared/services/toast";
+import { ToastService } from "../../shared/utils/toast.service";
 import { HttpClient } from "@angular/common/http";
 import { TokenVerification } from "../../shared/models/user";
 

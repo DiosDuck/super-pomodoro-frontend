@@ -1,7 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { StatusResponse } from '../models/status';
+
+export interface StatusRequest {
+    name: string,
+    url: string,
+    type: 'value' | 'health',
+};
+
+export interface StatusResponse {
+    message: string,
+    status: 'HOLD' | 'OK' | 'WARN' | 'CRIT',
+}
 
 @Injectable({
   providedIn: 'root'

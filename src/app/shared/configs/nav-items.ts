@@ -1,4 +1,4 @@
-import { NavItem } from "../components/navbar/models/nav-elems";
+import { NavItem } from "../../layout/navbar/navbar.model";
 
 export const NAV_MENU_ITEMS : NavItem [] = [
     {
