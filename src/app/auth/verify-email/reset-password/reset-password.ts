@@ -1,16 +1,16 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { UserService } from "../../shared/services/user";
+import { UserService } from "../../../shared/services/user";
 import { ActivatedRoute } from "@angular/router";
 import { ResetPasswordService } from "../verify-email.services";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { passwordMatchValidator } from "../../shared/validator/password-match";
-import { ToastService } from "../../shared/services/toast";
+import { passwordMatchValidator } from "../../../shared/validator/password-match";
+import { ToastService } from "../../../shared/services/toast";
 import { finalize, take } from "rxjs";
-import { LastRouteService } from "../../shared/services/last-route";
+import { LastRouteService } from "../../../shared/services/last-route";
 
 @Component({
     templateUrl: 'reset-password.html',
-    styleUrls: ['../../shared/styles/form-page.scss', 'reset-password.scss'],
+    styleUrls: ['../../../shared/styles/form-page.scss', 'reset-password.scss'],
     imports: [ReactiveFormsModule],
 })
 export class ResetPassword implements OnInit{

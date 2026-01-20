@@ -21,6 +21,11 @@ export const AUTH_ROUTES: Routes = [
         loadComponent: () => import('./forgot-password/forgot-password').then(m => m.ForgotPassword),
     },
     {
+        path: 'verify-email',
+        title: 'Email Verification',
+        loadChildren: () => import('./verify-email/verify-email.routes').then(m => m.VERIFY_EMAIL_ROUTES),
+    },
+    {
         path: '**',
         redirectTo: '/not-found',
     }

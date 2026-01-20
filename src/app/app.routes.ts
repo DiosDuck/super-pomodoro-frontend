@@ -20,11 +20,6 @@ export const routes: Routes = [
         loadChildren: () => import('./pomodoro/pomodoro.routes').then(m => m.POMODORO_ROUTES),
     },
     {
-        path: 'verify-email',
-        title: 'Email Verification',
-        loadChildren: () => import('./verify-email/verify-email.routes').then(m => m.VERIFY_EMAIL_ROUTES),
-    },
-    {
         path: 'auth',
         runGuardsAndResolvers: 'always',
         loadChildren: () => import('./auth/auth.routes').then(m => m.AUTH_ROUTES),
