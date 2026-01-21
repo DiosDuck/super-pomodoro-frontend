@@ -1,6 +1,5 @@
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
-import { UserService } from "../../shared/services/user";
-import { nullableUser } from "../../shared/models/user";
+import { UserService, nullableUser } from "../../shared/utils/user.service";
 import { DatePipe } from "@angular/common";
 
 @Component({

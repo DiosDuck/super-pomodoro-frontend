@@ -1,17 +1,17 @@
 import { Component, inject } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { passwordMatchValidator } from '../../shared/validator/password-match';
+import { passwordMatchValidator } from '../../shared/utils/password-match.validator';
 import { AuthService } from '../auth.service';
 import { ToastService } from '../../shared/utils/toast.service';
-import { LastRouteService } from '../../shared/services/last-route';
+import { LastRouteService } from '../../shared/utils/last-route.service';
 import { catchError, take, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
-  styleUrls: ['../../shared/styles/form-page.scss', './register.scss'],
+  styleUrls: ['./register.scss'],
   imports: [ReactiveFormsModule],
 })
 export class Register {
@@ -28,7 +28,7 @@ export class Register {
       email: new FormControl('', [Validators.required, Validators.email]),
       name: new FormControl('', Validators.required),
     },
-    {validators: [passwordMatchValidator]}
+    {validators: [passwordMatchValidator('password', 'confirmPassword')]}
   );
 
   errorRegister = false;

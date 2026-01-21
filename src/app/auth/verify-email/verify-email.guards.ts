@@ -1,9 +1,8 @@
 import { inject } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivateFn, Router } from "@angular/router";
-import { UserService } from "../../shared/services/user";
+import { UserService, TokenVerification } from "../../shared/utils/user.service";
 import { ToastService } from "../../shared/utils/toast.service";
 import { HttpClient } from "@angular/common/http";
-import { TokenVerification } from "../../shared/models/user";
 
 export const verifyEmailRegisterGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot

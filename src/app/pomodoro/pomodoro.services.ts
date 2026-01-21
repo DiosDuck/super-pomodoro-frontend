@@ -1,7 +1,7 @@
 import { Injectable, signal, Signal, WritableSignal } from '@angular/core';
-import { LocalStorageService } from '../shared/services/local-storage';
+import { LocalStorageService } from '../shared/utils/local-storage.service';
 import { BehaviorSubject, firstValueFrom, interval, Observable, ReplaySubject, Subject, switchMap, take, takeUntil, takeWhile } from 'rxjs';
-import { UserService } from '../shared/services/user';
+import { UserService } from '../shared/utils/user.service';
 import { HttpClient } from '@angular/common/http';
 import { ToastService } from '../shared/utils/toast.service';
 

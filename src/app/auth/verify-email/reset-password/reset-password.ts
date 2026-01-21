@@ -1,16 +1,16 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { UserService } from "../../../shared/services/user";
+import { UserService } from "../../../shared/utils/user.service";
 import { ActivatedRoute } from "@angular/router";
 import { ResetPasswordService } from "../verify-email.services";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { passwordMatchValidator } from "../../../shared/validator/password-match";
+import { passwordMatchValidator } from "../../../shared/utils/password-match.validator";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { finalize, take } from "rxjs";
-import { LastRouteService } from "../../../shared/services/last-route";
+import { LastRouteService } from "../../../shared/utils/last-route.service";
 
 @Component({
     templateUrl: 'reset-password.html',
-    styleUrls: ['../../../shared/styles/form-page.scss', 'reset-password.scss'],
+    styleUrls: ['reset-password.scss'],
     imports: [ReactiveFormsModule],
 })
 export class ResetPassword implements OnInit{
@@ -24,7 +24,7 @@ export class ResetPassword implements OnInit{
             password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
             confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)])
         },
-        {validators: [passwordMatchValidator]}
+        {validators: [passwordMatchValidator('password', 'confirmPassword')]}
     );
     isWaiting = false;
 

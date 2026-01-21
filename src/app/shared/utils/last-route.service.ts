@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
-import { LocalStorageService } from "./local-storage";
+import { LocalStorageService } from "./local-storage.service";
 import { Router } from "@angular/router";
-import { ToastService } from "../utils/toast.service";
+import { ToastService } from "./toast.service";
 
 @Injectable({
     providedIn: 'root',

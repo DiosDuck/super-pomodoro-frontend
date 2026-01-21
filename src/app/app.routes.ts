@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, signedGuard } from './shared/guards/user-state';
+import { adminGuard, signedGuard } from './shared/guards/user-state.guard';
 
 export const routes: Routes = [
     {

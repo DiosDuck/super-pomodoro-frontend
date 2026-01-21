@@ -1,8 +1,8 @@
 import { Component, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { UserService } from "../../../shared/services/user";
+import { UserService } from "../../../shared/utils/user.service";
 import { UpdateUserService } from "../../profile.services";
-import { LastRouteService } from "../../../shared/services/last-route";
+import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { Router } from "@angular/router";
 import { finalize, take } from "rxjs";
@@ -10,7 +10,7 @@ import { finalize, take } from "rxjs";
 @Component({
     selector: 'app-profile-delete-account',
     templateUrl: 'delete-account.html',
-    styleUrls: ['../../../shared/styles/form-page.scss', 'delete-account.scss'],
+    styleUrls: ['delete-account.scss'],
     imports: [ReactiveFormsModule],
 })
 export class DeleteAccount {

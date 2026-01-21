@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { ToastService } from "../../shared/utils/toast.service";
-import { LastRouteService } from "../../shared/services/last-route";
+import { LastRouteService } from "../../shared/utils/last-route.service";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AuthService } from "../auth.service";
 import { catchError, finalize, take, throwError } from "rxjs";
@@ -8,7 +8,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 
 @Component({
     templateUrl: 'forgot-password.html',
-    styleUrls: ['../../shared/styles/form-page.scss', 'forgot-password.scss'],
+    styleUrls: ['forgot-password.scss'],
     imports: [ReactiveFormsModule]
 })
 export class ForgotPassword {

@@ -1,17 +1,17 @@
 import { Component, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { passwordMatchValidator } from "../../../shared/validator/password-match";
-import { UserService } from "../../../shared/services/user";
+import { passwordMatchValidator } from "../../../shared/utils/password-match.validator";
+import { UserService } from "../../../shared/utils/user.service";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { UpdateUserService } from "../../profile.services";
 import { finalize, take } from "rxjs";
-import { LastRouteService } from "../../../shared/services/last-route";
+import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { Router } from "@angular/router";
 
 @Component({
     selector: 'app-profile-change-password',
     templateUrl: 'change-password.html',
-    styleUrls: ['../../../shared/styles/form-page.scss', 'change-password.scss'],
+    styleUrls: ['change-password.scss'],
     imports: [ReactiveFormsModule],
 })
 export class ChangePassword {
@@ -24,10 +24,10 @@ export class ChangePassword {
   changePasswordForm = new FormGroup(
     {
       oldPassword: new FormControl('', [Validators.required]),
-      password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
+      newPassword: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
       confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
     },
-    {validators: [passwordMatchValidator]}
+    {validators: [passwordMatchValidator('newPassword', 'confirmPassword')]}
   );
 
   isWaiting = false;
@@ -36,7 +36,7 @@ export class ChangePassword {
     this.isWaiting = true;
     this.updateUserService.updatePassword(
         this.changePasswordForm.value.oldPassword!,
-        this.changePasswordForm.value.password!,
+        this.changePasswordForm.value.newPassword!,
       )
       .pipe(
         take(1),

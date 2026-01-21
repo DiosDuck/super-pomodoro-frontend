@@ -1,9 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { NAV_MENU_ITEMS } from '../shared/configs/nav-items';
-import { UserService } from '../shared/services/user';
-import { LoggedInPipe } from '../shared/pipes/user';
-import { nullableUser } from '../shared/models/user';
+import { UserService, nullableUser } from '../shared/utils/user.service';
+import { LoggedInPipe } from '../shared/pipes/user.pipe';
 
 @Component({
   selector: 'app-home',

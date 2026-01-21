@@ -1,8 +1,33 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { filter, firstValueFrom, Observable, ReplaySubject, take } from 'rxjs';
-import { User, nullableUser } from '../models/user';
-import { LocalStorageService } from './local-storage';
+import { LocalStorageService } from './local-storage.service';
+
+export interface User {
+    displayName: string,
+    username: string,
+    email: string,
+    roles: role [],
+    activatedAtTimeStamp: number,
+}
+
+export interface LoginData {
+    username: string,
+    password: string,
+}
+
+export interface TokenResponse {
+    token: string,
+}
+
+export interface TokenVerification {
+    token: string,
+    id: number,
+}
+
+export type role = 'ROLE_USER' | 'ROLE_ADMIN';
+export type nullableUser = User | null;
+
 
 @Injectable({
   providedIn: 'root'

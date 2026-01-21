@@ -1,7 +1,7 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { inject } from "@angular/core";
-import { UserToken } from "../services/user";
+import { UserToken } from "../utils/user.service";
 
 export function userInterceptor(
   req: HttpRequest<unknown>,

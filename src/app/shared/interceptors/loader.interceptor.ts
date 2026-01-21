@@ -1,7 +1,7 @@
 import { HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { inject } from "@angular/core";
 import { finalize, Observable } from "rxjs";
-import { LoaderService } from "../services/loader";
+import { LoaderService } from "../utils/loader.service";
 
 const LOADER_URLS = [
     '/api/auth/login',

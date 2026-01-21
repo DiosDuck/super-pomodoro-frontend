@@ -1,8 +1,7 @@
 import { Component, inject, OnInit, output, signal } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
-import { LoggedInPipe } from '../../../shared/pipes/user';
-import { UserService } from '../../../shared/services/user';
-import { nullableUser } from '../../../shared/models/user';
+import { LoggedInPipe } from '../../../shared/pipes/user.pipe';
+import { UserService, nullableUser } from '../../../shared/utils/user.service';
 import { NAV_MENU_ITEMS } from '../../../shared/configs/nav-items';
 import { navId } from '../navbar.model';
 

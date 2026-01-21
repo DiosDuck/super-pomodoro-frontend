@@ -1,6 +1,6 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import { NavItem } from "../../layout/navbar/navbar.model";
-import { nullableUser } from "../models/user";
+import { nullableUser } from "../utils/user.service";
 
 @Pipe({
     name: 'loggedIn',
