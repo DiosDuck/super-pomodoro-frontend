@@ -1,7 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { filter, firstValueFrom, Observable, ReplaySubject, take } from 'rxjs';
+import { catchError, filter, firstValueFrom, Observable, ReplaySubject, take, tap } from 'rxjs';
 import { LocalStorageService } from './local-storage.service';
+
+export const SKIP_TOKEN = new HttpContextToken<boolean>(() => false);
 
 export interface User {
     displayName: string,
@@ -18,6 +20,7 @@ export interface LoginData {
 
 export interface TokenResponse {
     token: string,
+    refresh_token: string,
 }
 
 export interface TokenVerification {
@@ -50,25 +53,28 @@ export class UserService {
         this.setUser(null);
     }
 
-    async loadUser(token : string | null = null): Promise<void> {
+    loadUser(token : TokenResponse | null = null): Observable<nullableUser> {
         if (token !== null) {
             this._userToken.set(token);
         }
 
         if (!this._userToken.isSet()) {
             this.setUser(null);
-            return;
+            return this.user;
         }
 
-        let user : nullableUser;
-        try {
-            user = await firstValueFrom(this._http.get<User>('/api/profile'));
-        } catch (err) {
-            user = null;
-            this._userToken.remove();
-        }
+        return this._http.get<User>('/api/profile')
+            .pipe(
+                tap(user => this.setUser(user)),
+            )
+        ;
+    }
 
-        this.setUser(user);
+    refreshToken(): Observable<TokenResponse>
+    {
+        return this._http.post<TokenResponse>('/api/auth/token/refresh', {
+            refresh_token: this._userToken.getRefreshToken()!
+        }, {context: new HttpContext().set(SKIP_TOKEN, true)});
     }
 
     private setUser(user: nullableUser): void
@@ -81,26 +87,46 @@ export class UserService {
   providedIn: 'root'
 })
 export class UserToken {
-    private readonly _key = 'token';
+    private readonly _token = 'token';
+    private readonly _refreshToken = 'refresh_token';
     private _localStorageService = inject(LocalStorageService);
 
-    get(): string | null
+    get(): TokenResponse | null
     {
-        return this._localStorageService.get(this._key);
+        if (!this.isSet()) {
+            return null;
+        }
+
+        return {
+            token: this.getToken()!,
+            refresh_token: this.getRefreshToken()!,
+        }
     }
 
-    set(token : string) : void
+    getToken(): string | null
     {
-        this._localStorageService.set(this._key, token);
+        return this._localStorageService.get(this._token);
+    }
+
+    getRefreshToken(): string | null
+    {
+        return this._localStorageService.get(this._refreshToken);
+    }
+
+    set(tokenResponse : TokenResponse) : void
+    {
+        this._localStorageService.set(this._token, tokenResponse.token);
+        this._localStorageService.set(this._refreshToken, tokenResponse.refresh_token);
     }
 
     isSet() : boolean
     {
-        return this._localStorageService.get(this._key) !== null;
+        return this._localStorageService.get(this._token) !== null;
     }
 
     remove() : void
     {
-        this._localStorageService.remove(this._key);
+        this._localStorageService.remove(this._token);
+        this._localStorageService.remove(this._refreshToken);
     }
 }

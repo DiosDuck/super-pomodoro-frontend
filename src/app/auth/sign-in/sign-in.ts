@@ -22,20 +22,23 @@ export class SignIn {
   })
   isWaiting = false;
 
-  async onSubmit() {
+  onSubmit() {
     this.isWaiting = true;
-    try {
-      const loginData = {
-        username: this.loginForm.value.username!,
-        password: this.loginForm.value.password!,
-      }
-      await this.authService.login(loginData);
-      this.toastService.addToast("Successful sign in!", "success");
-      await this.lastRouteService.redirectToLastRoute();
-    } catch (err) {
-      this.toastService.addToast("Username or password invalid!", "error");
-      this.isWaiting = false;
+    const loginData = {
+      username: this.loginForm.value.username!,
+      password: this.loginForm.value.password!,
     }
+    this.authService.login(loginData)
+      .subscribe(nullableUser => {
+        if (nullableUser === null) {
+          this.toastService.addToast("Username or password invalid!", "error");
+          this.isWaiting = false;
+        } else {
+          this.toastService.addToast("Successful sign in!", "success");
+          this.lastRouteService.redirectToLastRoute();
+        }
+      })
+    ;
   }
 
   async onBack() {

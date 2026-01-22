@@ -6,10 +6,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { userInterceptor } from './shared/interceptors/login.interceptor';
 import { UserService } from './shared/utils/user.service';
 import { loaderInterceptor } from './shared/interceptors/loader.interceptor';
-
-export function initAuth(userService: UserService) {
-  return () => userService.loadUser();
-}
+import { take } from 'rxjs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([userInterceptor, loaderInterceptor])),
     provideAppInitializer(() => {
       const userService = inject(UserService);
-      return userService.loadUser();
+      return userService.loadUser().pipe(take(1));
     })
   ]
 };
