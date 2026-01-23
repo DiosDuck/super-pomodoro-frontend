@@ -1,12 +1,12 @@
 import { Component, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { passwordMatchValidator } from "../../../shared/utils/password-match.validator";
-import { UserService } from "../../../shared/utils/user.service";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { UpdateUserService } from "../../profile.services";
 import { finalize, take } from "rxjs";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { Router } from "@angular/router";
+import { AuthService } from "../../../auth/auth.service";
 
 @Component({
     selector: 'app-profile-change-password',
@@ -15,7 +15,7 @@ import { Router } from "@angular/router";
     imports: [ReactiveFormsModule],
 })
 export class ChangePassword {
-  userService = inject(UserService);
+  authService = inject(AuthService);
   toastService = inject(ToastService);
   updateUserService = inject(UpdateUserService);
   lastRouteService = inject(LastRouteService);
@@ -46,9 +46,11 @@ export class ChangePassword {
         {
           next: () => {
             this.toastService.addToast('Password has been changed, please log in.', 'note', 10);
-            this.userService.logout();
-            this.lastRouteService.updateLastRoute('/');
-            this.router.navigateByUrl('/auth/sign-in');
+            this.authService.logout()
+              .subscribe(() => {
+                this.lastRouteService.updateLastRoute('/');
+                this.router.navigateByUrl('/auth/sign-in');
+              });
           },
           error: () => {
             this.toastService.addToast('Wrong password, please introduce it again.', 'error', 10);

@@ -1,8 +1,9 @@
 import { Component, inject, OnInit, output, signal } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
-import { UserService, nullableUser } from '../../../shared/utils/user.service';
+import { UserService } from '../../../shared/utils/user.service';
 import { LastRouteService } from '../../../shared/utils/last-route.service';
 import { navId } from '../navbar.model';
+import { AuthService, nullableUser } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-nav-auth',
@@ -12,6 +13,7 @@ import { navId } from '../navbar.model';
 })
 export class Auth implements OnInit {
   userService = inject(UserService);
+  authService = inject(AuthService)
   router = inject(Router);
   lastRouteService = inject(LastRouteService);
 
@@ -25,8 +27,8 @@ export class Auth implements OnInit {
 
   onLogout(): void
   {
-    this.userService.logout();
-    this.lastRouteService.redirectToLastRoute();
+    this.authService.logout()
+      .subscribe(() => this.lastRouteService.redirectToLastRoute());
   }
 
   saveCurrentUrl(): void

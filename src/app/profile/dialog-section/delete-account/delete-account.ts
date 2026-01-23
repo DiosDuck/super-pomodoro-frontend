@@ -1,11 +1,11 @@
 import { Component, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { UserService } from "../../../shared/utils/user.service";
 import { UpdateUserService } from "../../profile.services";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { Router } from "@angular/router";
 import { finalize, take } from "rxjs";
+import { AuthService } from "../../../auth/auth.service";
 
 @Component({
     selector: 'app-profile-delete-account',
@@ -14,7 +14,7 @@ import { finalize, take } from "rxjs";
     imports: [ReactiveFormsModule],
 })
 export class DeleteAccount {
-    userService = inject(UserService);
+    authService = inject(AuthService);
     updateUserService = inject(UpdateUserService);
     lastRouterService = inject(LastRouteService);
     toastService = inject(ToastService);
@@ -41,8 +41,8 @@ export class DeleteAccount {
                 next: () => {
                     this.toastService.addToast('User has been deleted.', 'note');
                     this.lastRouterService.updateLastRoute('/');
-                    this.userService.logout();
-                    this.router.navigateByUrl('/auth/sign-in');
+                    this.authService.logout()
+                        .subscribe(() => this.router.navigateByUrl('/auth/sign-in'));
                 },
                 error: () => {
                     this.toastService.addToast('Wrong password, please introduce it again.', 'error', 10);

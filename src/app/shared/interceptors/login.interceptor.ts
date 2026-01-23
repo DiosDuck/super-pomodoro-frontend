@@ -1,25 +1,24 @@
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { inject } from "@angular/core";
-import { SKIP_TOKEN, UserService, UserToken } from "../utils/user.service";
+import { UserToken } from "../utils/user.service";
+import { AuthService, SKIP_TOKEN } from "../../auth/auth.service";
 
 export function userInterceptor(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
 ): Observable<HttpEvent<unknown>> {
-    const userToken = inject(UserToken);
-    const userService = inject(UserService);
-    const token = userToken.get();
+    const authService = inject(AuthService);
+    const token = authService.getToken();
     if (token === null || req.context.get(SKIP_TOKEN)) {
         return next(req);
     }
 
-    return makeAuthorizationCall(req, next, token.token)
+    return makeAuthorizationCall(req, next, token)
       .pipe(
         catchError((error: HttpErrorResponse) => {
           if (error.status === 401) {
-            console.log('here');
-            return handleUnauthorizedError(req, next, userToken, userService)
+            return handleUnauthorizedError(req, next, authService)
           }
 
           return throwError(() => error);
@@ -31,21 +30,13 @@ export function userInterceptor(
 function handleUnauthorizedError(
   req: HttpRequest<unknown>,
   next: HttpHandlerFn,
-  userToken: UserToken,
-  userService: UserService,
+  authService: AuthService,
 ): Observable<HttpEvent<unknown>> {
-  return userService.refreshToken()
+  return authService.refreshToken()
     .pipe(
-      switchMap(token => {
-        userToken.set(token);
-
-        return makeAuthorizationCall(req, next, token.token);
+      switchMap(user => {
+        return makeAuthorizationCall(req, next, authService.getToken()!);
       }),
-      catchError((error) => {
-        userService.logout();
-
-        return throwError(() => error)
-      })
     );
 }
 

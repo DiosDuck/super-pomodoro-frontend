@@ -1,5 +1,4 @@
 import { Component, inject, OnInit } from "@angular/core";
-import { UserService } from "../../../shared/utils/user.service";
 import { ActivatedRoute } from "@angular/router";
 import { ResetPasswordService } from "../verify-email.services";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -7,6 +6,7 @@ import { passwordMatchValidator } from "../../../shared/utils/password-match.val
 import { ToastService } from "../../../shared/utils/toast.service";
 import { finalize, take } from "rxjs";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
+import { AuthService } from "../../auth.service";
 
 @Component({
     templateUrl: 'reset-password.html',
@@ -14,7 +14,7 @@ import { LastRouteService } from "../../../shared/utils/last-route.service";
     imports: [ReactiveFormsModule],
 })
 export class ResetPassword implements OnInit{
-    userService = inject(UserService);
+    authService = inject(AuthService);
     resetPasswordService = inject(ResetPasswordService);
     route = inject(ActivatedRoute);
     toastService = inject(ToastService);
@@ -29,17 +29,21 @@ export class ResetPassword implements OnInit{
     isWaiting = false;
 
     ngOnInit(): void {
-        this.userService.logout();
-        let queryParams = this.route.queryParams
-            .pipe(
-                take(1),
-            )
-            .subscribe((params) => {
-                this.resetPasswordService.setParameters(
-                    params['token'],
-                    parseInt(params['id']),
-                );
-            });
+        this.authService.logout()
+            .subscribe(
+                () => {
+                    this.route.queryParams
+                    .pipe(
+                        take(1),
+                    )
+                    .subscribe((params) => {
+                        this.resetPasswordService.setParameters(
+                            params['token'],
+                            parseInt(params['id']),
+                        );
+                    });
+                }
+        );
     }
 
     onSubmit() {

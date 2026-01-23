@@ -4,9 +4,9 @@ import { provideRouter, withRouterConfig } from '@angular/router';
 import { routes } from './app.routes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { userInterceptor } from './shared/interceptors/login.interceptor';
-import { UserService } from './shared/utils/user.service';
 import { loaderInterceptor } from './shared/interceptors/loader.interceptor';
 import { take } from 'rxjs';
+import { AuthService } from './auth/auth.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -15,8 +15,8 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withRouterConfig({onSameUrlNavigation: 'reload'})),
     provideHttpClient(withInterceptors([userInterceptor, loaderInterceptor])),
     provideAppInitializer(() => {
-      const userService = inject(UserService);
-      return userService.loadUser().pipe(take(1));
+      const authService = inject(AuthService);
+      return authService.loadUser().pipe(take(1));
     })
   ]
 };

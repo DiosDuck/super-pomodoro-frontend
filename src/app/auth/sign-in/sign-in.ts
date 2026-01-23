@@ -29,13 +29,14 @@ export class SignIn {
       password: this.loginForm.value.password!,
     }
     this.authService.login(loginData)
-      .subscribe(nullableUser => {
-        if (nullableUser === null) {
-          this.toastService.addToast("Username or password invalid!", "error");
-          this.isWaiting = false;
-        } else {
+      .subscribe({
+        next: user => {
           this.toastService.addToast("Successful sign in!", "success");
           this.lastRouteService.redirectToLastRoute();
+        },
+        error: () => {
+          this.toastService.addToast("Username or password invalid!", "error");
+          this.isWaiting = false;
         }
       })
     ;

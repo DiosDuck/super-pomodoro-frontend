@@ -1,6 +1,7 @@
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
-import { UserService, nullableUser } from "../../shared/utils/user.service";
+import { UserService } from "../../shared/utils/user.service";
 import { DatePipe } from "@angular/common";
+import { nullableUser } from "../../auth/auth.service";
 
 @Component({
     templateUrl: 'personal-info.html',
