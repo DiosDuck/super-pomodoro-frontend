@@ -1,7 +1,6 @@
 import { Component, computed, inject, OnInit, signal } from "@angular/core";
-import { UserService } from "../../shared/utils/user.service";
 import { DatePipe } from "@angular/common";
-import { nullableUser } from "../../auth/auth.service";
+import { NullableUser, UserService } from "../../auth/auth.service";
 
 @Component({
     templateUrl: 'personal-info.html',
@@ -11,7 +10,7 @@ import { nullableUser } from "../../auth/auth.service";
 })
 export class PersonalInfo implements OnInit {
     private _userService = inject(UserService);
-    user = signal<nullableUser>(null);
+    user = signal<NullableUser>(null);
     activatedAt = computed(() => {
         if (this.user() === null) {
             return new Date();
@@ -21,7 +20,7 @@ export class PersonalInfo implements OnInit {
 
     ngOnInit(): void {
         this._userService.user.subscribe(
-            (user: nullableUser) => {
+            user => {
                 this.user.set(user);
             }
         );

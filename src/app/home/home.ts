@@ -1,9 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from "@angular/router";
 import { NAV_MENU_ITEMS } from '../shared/configs/nav-items';
-import { UserService } from '../shared/utils/user.service';
 import { LoggedInPipe } from '../shared/pipes/user.pipe';
-import { nullableUser } from '../auth/auth.service';
+import { NullableUser, UserService } from '../auth/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -13,7 +12,7 @@ import { nullableUser } from '../auth/auth.service';
 })
 export class Home implements OnInit{
   private _userService = inject(UserService);
-  user = signal<nullableUser>(null);
+  user = signal<NullableUser>(null);
   navItems = NAV_MENU_ITEMS;
 
   ngOnInit(): void {

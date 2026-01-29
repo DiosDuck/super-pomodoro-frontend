@@ -1,7 +1,6 @@
 import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angular/common/http";
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { inject } from "@angular/core";
-import { UserToken } from "../utils/user.service";
 import { AuthService, SKIP_TOKEN } from "../../auth/auth.service";
 
 export function userInterceptor(

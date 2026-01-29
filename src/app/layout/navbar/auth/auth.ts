@@ -1,9 +1,8 @@
 import { Component, inject, OnInit, output, signal } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
-import { UserService } from '../../../shared/utils/user.service';
 import { LastRouteService } from '../../../shared/utils/last-route.service';
 import { navId } from '../navbar.model';
-import { AuthService, nullableUser } from '../../../auth/auth.service';
+import { AuthService, NullableUser, UserService } from '../../../auth/auth.service';
 
 @Component({
   selector: 'app-nav-auth',
@@ -17,7 +16,7 @@ export class Auth implements OnInit {
   router = inject(Router);
   lastRouteService = inject(LastRouteService);
 
-  user = signal<nullableUser>(null);
+  user = signal<NullableUser>(null);
 
   onSelect = output<navId>();
 

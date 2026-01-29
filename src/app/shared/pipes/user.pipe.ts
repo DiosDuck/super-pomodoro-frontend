@@ -1,12 +1,12 @@
 import { Pipe, PipeTransform } from "@angular/core";
 import { NavItem } from "../../layout/navbar/navbar.model";
-import { nullableUser } from "../../auth/auth.service";
+import { NullableUser } from "../../auth/auth.service";
 
 @Pipe({
     name: 'loggedIn',
 })
 export class LoggedInPipe implements PipeTransform {
-    transform(value: NavItem[], user: nullableUser = null, onlyLoggedIn: boolean = false): NavItem[] {
+    transform(value: NavItem[], user: NullableUser = null, onlyLoggedIn: boolean = false): NavItem[] {
         let loggedOutItems = value.filter((navItem) => !navItem.loggedIn);
 
         if (user === null) {
