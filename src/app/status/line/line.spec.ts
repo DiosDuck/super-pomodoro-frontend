@@ -1,7 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 import { Line } from "./line";
-import { HttpTestingController } from "@angular/common/http/testing";
+import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
+import { provideHttpClient } from "@angular/common/http";
 
 describe('Status Line Component', () => {
     let fixure: ComponentFixture<Line>;
@@ -10,6 +11,10 @@ describe('Status Line Component', () => {
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [Line],
+            providers: [
+                provideHttpClient(),
+                provideHttpClientTesting(),
+            ]
         });
 
         fixure = TestBed.createComponent(Line);

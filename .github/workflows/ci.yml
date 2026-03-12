@@ -22,5 +22,5 @@ jobs:
       - name: Install
         run: npm ci
 
-      - name: Test (must enforce coverage thresholds in vitest.config.ts)
+      - name: Running Tests
         run: npm run test-ci

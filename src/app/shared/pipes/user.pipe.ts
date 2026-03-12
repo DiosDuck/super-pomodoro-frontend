@@ -7,6 +7,10 @@ import { NullableUser } from "../../auth/auth.service";
 })
 export class LoggedInPipe implements PipeTransform {
     transform(value: NavItem[], user: NullableUser = null, onlyLoggedIn: boolean = false): NavItem[] {
+        if (user === null && onlyLoggedIn) {
+            return [];
+        }
+
         let loggedOutItems = value.filter((navItem) => !navItem.loggedIn);
 
         if (user === null) {
