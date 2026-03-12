@@ -1,43 +1,32 @@
-import { TestBed } from "@angular/core/testing";
-import { describe, beforeEach, it, expect } from 'vitest';
-import { StatusResponse, StatusService } from "../status.service";
-import { Observable, of } from "rxjs";
-import { CommonModule } from "@angular/common";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 import { Line } from "./line";
-
-class StatusServiceMockSuccess {
-    getResponse(url: string): Observable<StatusResponse> {
-        return of({message: 'Test Success', status: 'OK'});
-    }
-}
-
-class StatusServiceMockWarn {
-    getResponse(url: string): Observable<StatusResponse> {
-        return of({message: 'Test Warn', status: 'WARN'});
-    }
-}
-
-class StatusServiceMockCrit {
-    getResponse(url: string): Observable<StatusResponse> {
-        return of({message: 'Test Crit', status: 'CRIT'});
-    }
-}
-
-class StatusServiceMockValue {
-    getResponse(url: string): Observable<StatusResponse> {
-        return of({message: '1.0.0', status: 'OK'});
-    }
-}
+import { HttpTestingController } from "@angular/common/http/testing";
 
 describe('Status Line Component', () => {
-    it('Line Component Success', () => {
+    let fixure: ComponentFixture<Line>;
+    let httpMock: HttpTestingController;
+
+    beforeEach(() => {
         TestBed.configureTestingModule({
-            imports: [CommonModule],
-            providers: [{ provide: StatusService, useClass: StatusServiceMockSuccess}],
+            imports: [Line],
         });
 
-        const fixure = TestBed.createComponent(Line);
-        fixure.componentRef.setInput('status', { name: 'Test Request Success', url: '/api/test', type: 'health'});
+        fixure = TestBed.createComponent(Line);
+        httpMock = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+        httpMock.verify();
+    })
+
+    it('Line Component Success', () => {
+        fixure.componentRef.setInput('status', { name: 'Test Request Success', url: '/api/test/1', type: 'health'});
+        fixure.detectChanges();
+
+        const req = httpMock.expectOne('/api/test/1');
+        req.flush({message: 'Test Success', status: 'OK'});
+
         fixure.detectChanges();
 
         const title: HTMLElement = fixure.nativeElement.querySelector('.status-line__title');
@@ -48,13 +37,12 @@ describe('Status Line Component', () => {
     });
 
     it('Line Component Warning', () => {
-        TestBed.configureTestingModule({
-            imports: [CommonModule],
-            providers: [{ provide: StatusService, useClass: StatusServiceMockWarn}],
-        });
+        fixure.componentRef.setInput('status', { name: 'Test Request Warning', url: '/api/test/2', type: 'health'});
+        fixure.detectChanges();
 
-        const fixure = TestBed.createComponent(Line);
-        fixure.componentRef.setInput('status', { name: 'Test Request Warning', url: '/api/test', type: 'health'});
+        const req = httpMock.expectOne('/api/test/2');
+        req.flush({message: 'Test Warning', status: 'WARN'});
+
         fixure.detectChanges();
 
         const title: HTMLElement = fixure.nativeElement.querySelector('.status-line__title');
@@ -65,13 +53,12 @@ describe('Status Line Component', () => {
     });
 
     it('Line Component Error', () => {
-        TestBed.configureTestingModule({
-            imports: [CommonModule],
-            providers: [{ provide: StatusService, useClass: StatusServiceMockCrit}],
-        });
+        fixure.componentRef.setInput('status', { name: 'Test Request Error', url: '/api/test/3', type: 'health'});
+        fixure.detectChanges();
 
-        const fixure = TestBed.createComponent(Line);
-        fixure.componentRef.setInput('status', { name: 'Test Request Error', url: '/api/test', type: 'health'});
+        const req = httpMock.expectOne('/api/test/3');
+        req.flush({message: 'Test Error', status: 'CRIT'}, {status: 500, statusText: 'Internal Server Error'});
+
         fixure.detectChanges();
 
         const title: HTMLElement = fixure.nativeElement.querySelector('.status-line__title');
@@ -81,14 +68,30 @@ describe('Status Line Component', () => {
         expect(title.textContent).toEqual('Test Request Error');
     });
 
-    it('Line Component Value', () => {
-        TestBed.configureTestingModule({
-            imports: [CommonModule],
-            providers: [{ provide: StatusService, useClass: StatusServiceMockValue}],
-        });
+    it('Line Component Server Error', () => {
+        fixure.componentRef.setInput('status', { name: 'Test Request Server Error', url: '/api/test/4', type: 'health'});
+        fixure.detectChanges();
 
-        const fixure = TestBed.createComponent(Line);
-        fixure.componentRef.setInput('status', { name: 'Test Request Value', url: '/api/test', type: 'value'});
+        const req = httpMock.expectOne('/api/test/4');
+        req.flush({'message': 'Internal Server Error'}, {status: 500, statusText: 'Internal Server Error'});
+
+        fixure.detectChanges();
+
+        const title: HTMLElement = fixure.nativeElement.querySelector('.status-line__title');
+        const result: HTMLElement = fixure.nativeElement.querySelector('.status-line__result');
+
+        expect(result.classList).toContain('status-line__error');
+        expect(title.textContent).toEqual('Test Request Server Error');
+    });
+
+    it('Line Component Value', () => {
+
+        fixure.componentRef.setInput('status', { name: 'Test Request Value', url: '/api/test/5', type: 'value'});
+        fixure.detectChanges();
+
+        const req = httpMock.expectOne('/api/test/5');
+        req.flush({message: '1.0.0', status: 'OK'});
+
         fixure.detectChanges();
 
         const title: HTMLElement = fixure.nativeElement.querySelector('.status-line__title');
