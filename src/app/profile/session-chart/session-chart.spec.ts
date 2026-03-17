@@ -3,7 +3,7 @@ import { afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest";
 import { SessionChart } from "./session-chart";
 import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
 import { provideHttpClient } from "@angular/common/http";
-import { WorkTimeHistoryResponse } from "../profile.services";
+import { WorkTimeHistoryResponse } from "../profile.service";
 
 describe('Session Chart Component', () => {
     let fixure: ComponentFixture<SessionChart>;

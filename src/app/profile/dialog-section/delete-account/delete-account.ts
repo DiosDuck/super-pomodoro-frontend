@@ -1,6 +1,6 @@
 import { Component, inject } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { UpdateUserService } from "../../profile.services";
+import { UpdateUserService } from "../../profile.service";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { Router } from "@angular/router";

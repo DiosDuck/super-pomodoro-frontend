@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { DatePipe } from "@angular/common";
-import { WorkSessionHistoryService, WorkTimeHistoryResponse } from "../profile.services";
+import { WorkSessionHistoryService, WorkTimeHistoryResponse } from "../profile.service";
 import { take } from "rxjs";
 
 @Component({
