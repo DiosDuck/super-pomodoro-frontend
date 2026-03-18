@@ -18,6 +18,7 @@ export class Settings implements OnInit {
         longBreakTime: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
         numberOfCycles: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
         maxConfirmationTime: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
+        enableWaiting: new FormControl(true),
     })
 
     ngOnInit(): void 
@@ -41,6 +42,7 @@ export class Settings implements OnInit {
             longBreakTime: value.longBreakTime!,
             cyclesBeforeLongBreak: value.numberOfCycles!,
             maxConfirmationTime: value.maxConfirmationTime!,
+            enableWaiting: value.enableWaiting!,
             type: 'pomodoro.settings',
         }
 

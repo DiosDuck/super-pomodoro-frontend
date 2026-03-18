@@ -35,8 +35,8 @@ export class Index implements OnInit, OnDestroy {
   timer = signal<number>(0);
   minutes = computed(() => Math.floor(this.timer() / 60).toString().padStart(2, "0"));
   seconds = computed(() => (this.timer() % 60).toString().padStart(2, "0"));
-  timerStarted = signal<boolean>(false);
-  sessionStarted = signal<boolean>(false);
+  timerStarted = this.counterService.timerStarted;
+  sessionStarted = this.counterService.sessionStarted;
   isWaitingFormConfirmation = this.counterService.waitingConfirmation;
   alarm : HTMLAudioElement | null = null;
 
@@ -75,14 +75,9 @@ export class Index implements OnInit, OnDestroy {
       this.title.setTitle(this.titleValue());
     });
     this.counterService.finish.subscribe(() => {
-      if (this.isWaitingFormConfirmation()) {
-        this.timerStarted.set(false);
-        this.sessionStarted.set(false);
-      } else {
-        if (this.alarm) {
-          this.alarm.currentTime = 0;
-          this.alarm.play();
-        }
+      if (!this.isWaitingFormConfirmation() && this.alarm) {
+        this.alarm.currentTime = 0;
+        this.alarm.play();
       }
     })
   }
@@ -97,22 +92,18 @@ export class Index implements OnInit, OnDestroy {
     if (this.sessionStarted()) {
       await this.counterService.pomodoroContinue()
     } else {
-      this.sessionStarted.set(true);
+      this.alarm?.pause();
       await this.counterService.pomodoroStart()
     }
-    this.timerStarted.set(true);
   }
 
   onStop(): void
   {
-    this.timerStarted.set(false);
     this.counterService.pomodoroStop();
   }
 
   async onNext(): Promise<void>
   {
-    this.timerStarted.set(false);
-    this.sessionStarted.set(false);
     this.alarm?.pause();
     await this.counterService.pomodoroNext();
   }
@@ -124,15 +115,11 @@ export class Index implements OnInit, OnDestroy {
 
   async onRewind(): Promise<void>
   {
-    this.sessionStarted.set(false);
-    this.timerStarted.set(false);
     await this.counterService.pomodoroRewind();
   }
 
   async onReset(): Promise<void>
   {
-    this.sessionStarted.set(false);
-    this.timerStarted.set(false);
     await this.counterService.pomodoroReset();
   }
 }

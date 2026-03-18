@@ -11,6 +11,7 @@ export interface SettingsHttp {
     longBreakTime: number,
     cyclesBeforeLongBreak: number,
     maxConfirmationTime: number,
+    enableWaiting: boolean,
 }
 
 export interface Settings extends SettingsHttp {
@@ -152,6 +153,7 @@ export class SettingsService {
       longBreakTime: 15,
       cyclesBeforeLongBreak: 4,
       maxConfirmationTime: 1,
+      enableWaiting: true,
       type: this._settingsKey,
     };
     this.setLocalStorageSettings(setting);
@@ -277,6 +279,10 @@ export class CounterService {
   public cycle: Observable<Cycle>;
   private _waitingConfirmation: WritableSignal<boolean>;
   public waitingConfirmation: Signal<boolean>;
+  private _sessionStarted: WritableSignal<boolean>;
+  public sessionStarted: Signal<boolean>;
+  private _timerStarted: WritableSignal<boolean>;
+  public timerStarted: Signal<boolean>;
 
   private _stop: Subject<void>;
   private _remainingSeconds: BehaviorSubject<number>;
@@ -292,6 +298,10 @@ export class CounterService {
     this.cycle = this._cycleService.cycle;
     this._waitingConfirmation = signal(false);
     this.waitingConfirmation = this._waitingConfirmation.asReadonly();
+    this._sessionStarted = signal(false);
+    this.sessionStarted = this._sessionStarted.asReadonly();
+    this._timerStarted = signal(false);
+    this.timerStarted = this._timerStarted.asReadonly();
 
     this._stop = new Subject<void>();
     this._remainingSeconds = new BehaviorSubject<number>(0);
@@ -309,6 +319,7 @@ export class CounterService {
   async pomodoroStart() : Promise<void> 
   {
     this._cycleService.start();
+    this._sessionStarted.set(true);
     let setting = await this._settingService.getSettings();
     this._start(this._getSeconds(setting));
   }
@@ -326,6 +337,7 @@ export class CounterService {
   async pomodoroRewind() : Promise<void>
   {
     this.pomodoroStop();
+    this._sessionStarted.set(false);
     let setting = await this._settingService.getSettings();
     this._remainingSeconds.next(this._getSeconds(setting));
   }
@@ -333,6 +345,7 @@ export class CounterService {
   async pomodoroReset() : Promise<void>
   {
     this.pomodoroStop();
+    this._sessionStarted.set(false);
     let setting = await this._settingService.getSettings();
     this._cycleService.reset();
     this._remainingSeconds.next(this._getSeconds(setting));
@@ -347,6 +360,7 @@ export class CounterService {
 
   pomodoroStop(): void
   {
+    this._timerStarted.set(false);
     this._stop.next();
   }
 
@@ -355,10 +369,7 @@ export class CounterService {
     this.pomodoroStop();
     let settings = await this._settingService.getSettings();
     
-    this._cycleService.next(settings);
-
-    this._waitingConfirmation.set(false);
-    this._remainingSeconds.next(this._getSeconds(settings));
+    this._nextStep(settings);
   }
 
   private _getSeconds(settings: Settings): number
@@ -385,6 +396,7 @@ export class CounterService {
   {
     this.pomodoroStop();
 
+    this._timerStarted.set(true);
     this._remainingSeconds.next(numberSeconds);
     interval(1000)
       .pipe(
@@ -397,10 +409,24 @@ export class CounterService {
 
         if (next === 0) {
           this._finish.next();
-          this._confirmationWaiting();
+          this._finishSession();
         }
       })
     ;
+  }
+
+  private async _finishSession() : Promise<void>
+  {
+    this.pomodoroStop();
+    this._timerStarted.set(false);
+    this._sessionStarted.set(false);
+    let settings = await this._settingService.getSettings();
+
+    if (settings.enableWaiting) {
+      this._confirmationWaiting();
+    } else {
+      this._nextStep(settings);
+    }
   }
 
   private async _confirmationWaiting() : Promise<void>
@@ -409,6 +435,8 @@ export class CounterService {
     let settings = await this._settingService.getSettings();
 
     this._remainingSeconds.next(settings.maxConfirmationTime * 60);
+    this._timerStarted.set(true);
+    this._sessionStarted.set(true);
     this._waitingConfirmation.set(true);
     
     interval(1000)
@@ -425,6 +453,16 @@ export class CounterService {
           this.pomodoroReset();
         }
       });
+  }
+
+  private _nextStep(settings: Settings): void
+  {
+    this._cycleService.next(settings);
+
+    this._timerStarted.set(false);
+    this._sessionStarted.set(false);
+    this._waitingConfirmation.set(false);
+    this._remainingSeconds.next(this._getSeconds(settings));
   }
 }
 
