@@ -481,7 +481,7 @@ export class CounterService {
   private _nextStep(): void
   {
     if (this._cycleService.getCycleType() === 'work') {
-      this._workSessionHttpService.saveNewToastService(this._time / 60);
+      this._workSessionHttpService.saveNewToastService(this._time);
     }
 
     this._cycleService.next(this._settings!);
