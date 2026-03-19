@@ -5,7 +5,7 @@
         <div class="pomodoro-display__cycles">Number of cycles done: {{ this.numberOfCycles() }}</div>
     </div>
     <div class="pomodoro-buttons">
-        @if (isWaitingFormConfirmation()) {
+        @if (isWaitingForConfirmation()) {
            <button class="pomodoro-button" (click)="onNext()">
                 <svg class="pomodoro-button__icon">
                     <use xlink:href="assets/icons/sprite.svg#icon-next"></use>

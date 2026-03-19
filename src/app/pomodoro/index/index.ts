@@ -16,7 +16,7 @@ export class Index implements OnInit, OnDestroy {
   cycleState = signal<cycleType>('idle');
   header = computed(
     () => {
-      if (this.isWaitingFormConfirmation()) {
+      if (this.isWaitingForConfirmation()) {
         return 'Continue?'
       }
 
@@ -35,15 +35,15 @@ export class Index implements OnInit, OnDestroy {
   timer = signal<number>(0);
   minutes = computed(() => Math.floor(this.timer() / 60).toString().padStart(2, "0"));
   seconds = computed(() => (this.timer() % 60).toString().padStart(2, "0"));
-  timerStarted = this.counterService.timerStarted;
-  sessionStarted = this.counterService.sessionStarted;
-  isWaitingFormConfirmation = this.counterService.waitingConfirmation;
+  isWaitingForConfirmation = this.counterService.waitingTimer.timerStarted;
+  timerStarted = computed(() => this.counterService.sessionTimer.timerDecrementing() || this.counterService.waitingTimer.timerDecrementing());
+  sessionStarted = computed(() => this.counterService.sessionTimer.timerStarted() || this.counterService.waitingTimer.timerStarted());;
   alarm : HTMLAudioElement | null = null;
 
   titleValue = computed(
     () => {
       let start: string;
-      if (this.isWaitingFormConfirmation()) {
+      if (this.isWaitingForConfirmation()) {
         start = 'Confirm';
       } else {
         switch (this.cycleState()) {
@@ -70,16 +70,27 @@ export class Index implements OnInit, OnDestroy {
       this.cycleState.set(cycle.currentCycle);
       this.numberOfCycles.set(cycle.currentNumberOfCycle - 1);
     })
-    this.counterService.remainingSeconds.subscribe((time: number) => {
-      this.timer.set(time);
-      this.title.setTitle(this.titleValue());
+    this.counterService.waitingTimer.remainingSeconds.subscribe((time: number) => {
+      if (this.isWaitingForConfirmation()) {
+        this.timer.set(time);
+        this.title.setTitle(this.titleValue());
+      }
     });
-    this.counterService.finish.subscribe(() => {
-      if (!this.isWaitingFormConfirmation() && this.alarm) {
+    this.counterService.sessionTimer.remainingSeconds.subscribe((time: number) => {
+      if (!this.isWaitingForConfirmation()) {
+        this.timer.set(time);
+        this.title.setTitle(this.titleValue());
+      }
+    });
+    this.counterService.sessionTimer.finish.subscribe(() => {
+      if (this.alarm) {
         this.alarm.currentTime = 0;
         this.alarm.play();
       }
-    })
+    });
+    this.counterService.waitingTimer.finish.subscribe(() => {
+      this.counterService.pomodoroReset();
+    });
   }
 
   ngOnDestroy(): void {
@@ -87,13 +98,13 @@ export class Index implements OnInit, OnDestroy {
     this.alarm = null;
   }
 
-  async onStart(): Promise<void>
+  onStart(): void
   {
     if (this.sessionStarted()) {
-      await this.counterService.pomodoroContinue()
+      this.counterService.pomodoroContinue()
     } else {
       this.alarm?.pause();
-      await this.counterService.pomodoroStart()
+      this.counterService.pomodoroStart()
     }
   }
 
@@ -102,24 +113,24 @@ export class Index implements OnInit, OnDestroy {
     this.counterService.pomodoroStop();
   }
 
-  async onNext(): Promise<void>
+  onNext(): void
   {
     this.alarm?.pause();
-    await this.counterService.pomodoroNext();
+    this.counterService.pomodoroNext();
   }
 
-  async onIncrement(count: number): Promise<void>
+  onIncrement(count: number): void
   {
-    await this.counterService.pomodoroIncrement(count);
+    this.counterService.pomodoroIncrement(count * 60);
   }
 
-  async onRewind(): Promise<void>
+  onRewind(): void
   {
-    await this.counterService.pomodoroRewind();
+    this.counterService.pomodoroRewind();
   }
 
-  async onReset(): Promise<void>
+  onReset(): void
   {
-    await this.counterService.pomodoroReset();
+    this.counterService.pomodoroReset();
   }
 }

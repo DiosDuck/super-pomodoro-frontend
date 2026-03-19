@@ -183,7 +183,6 @@ export class CycleService {
 
   constructor(
     private readonly _localStorageService: LocalStorageService,
-    private readonly _workSessionHttpService: WorkSessionHttpService,
   ) {
     this._cycle = new BehaviorSubject(this._loadCycle());
     this.cycle = this._cycle.asObservable();
@@ -208,7 +207,6 @@ export class CycleService {
       }
 
       cycle.currentNumberOfCycle += 1;
-      this._workSessionHttpService.saveNewToastService(settings.workTime);
     }
 
     this._cycle.next(cycle);
@@ -272,173 +270,78 @@ export class CycleService {
   }
 }
 
-@Injectable({
-  providedIn: 'root'
-})
-export class CounterService {
-  public cycle: Observable<Cycle>;
-  private _waitingConfirmation: WritableSignal<boolean>;
-  public waitingConfirmation: Signal<boolean>;
-  private _sessionStarted: WritableSignal<boolean>;
-  public sessionStarted: Signal<boolean>;
-  private _timerStarted: WritableSignal<boolean>;
-  public timerStarted: Signal<boolean>;
-
+export class Timer {
   private _stop: Subject<void>;
   private _remainingSeconds: BehaviorSubject<number>;
   private _finish: Subject<void>;
-  
+
   public remainingSeconds: Observable<number>;
   public finish: Observable<void>;
 
-  constructor(
-    private _cycleService: CycleService,
-    private _settingService: SettingsService,
-  ) {
-    this.cycle = this._cycleService.cycle;
-    this._waitingConfirmation = signal(false);
-    this.waitingConfirmation = this._waitingConfirmation.asReadonly();
-    this._sessionStarted = signal(false);
-    this.sessionStarted = this._sessionStarted.asReadonly();
-    this._timerStarted = signal(false);
-    this.timerStarted = this._timerStarted.asReadonly();
+  private _timerStarted: WritableSignal<boolean>;
+  private _timerDecrementing: WritableSignal<boolean>;
 
+  public timerStarted: Signal<boolean>;
+  public timerDecrementing: Signal<boolean>;
+
+  constructor() {
     this._stop = new Subject<void>();
     this._remainingSeconds = new BehaviorSubject<number>(0);
     this.remainingSeconds = this._remainingSeconds.asObservable();
     this._finish = new Subject<void>();
     this.finish = this._finish.asObservable();
 
-    this._settingService.settings
-      .subscribe(
-        settings => this._remainingSeconds.next(this._getSeconds(settings))
-      )
-    ;
+    this._timerStarted = signal(false);
+    this.timerStarted = this._timerStarted.asReadonly();
+    this._timerDecrementing = signal(false);
+    this.timerDecrementing = this._timerDecrementing.asReadonly();
   }
 
-  async pomodoroStart() : Promise<void> 
+  setTime(time : number): void
   {
-    this._cycleService.start();
-    this._sessionStarted.set(true);
-    let setting = await this._settingService.getSettings();
-    this._start(this._getSeconds(setting));
+    this.stop();
+
+    this._remainingSeconds.next(time);
   }
 
-  async pomodoroContinue() : Promise<void>
+  start(): void 
   {
-    this._start(this._remainingSeconds.value);
+    this.stop();
+
+    this._timerStarted.set(true);
+    this._timerDecrementing.set(true);
+    this._intervalStarted();
   }
 
-  async pomodoroIncrement(count: number) : Promise<void>
+  continue(): void
   {
-    this._start(this._remainingSeconds.value + count * 60);
+    this.stop();
+
+    this._timerDecrementing.set(true);
+    this._intervalStarted();
   }
 
-  async pomodoroRewind() : Promise<void>
+  reset(): void
   {
-    this.pomodoroStop();
-    this._sessionStarted.set(false);
-    let setting = await this._settingService.getSettings();
-    this._remainingSeconds.next(this._getSeconds(setting));
-  }
-
-  async pomodoroReset() : Promise<void>
-  {
-    this.pomodoroStop();
-    this._sessionStarted.set(false);
-    let setting = await this._settingService.getSettings();
-    this._cycleService.reset();
-    this._remainingSeconds.next(this._getSeconds(setting));
-    this._waitingConfirmation.set(false);
-  }
-
-  async waitingConfirmationStart() : Promise<void>
-  {
-    let settings = await this._settingService.getSettings();
-    this._start(settings.maxConfirmationTime * 60);
-  }
-
-  pomodoroStop(): void
-  {
+    this.stop();
     this._timerStarted.set(false);
+  }
+
+  addTime(seconds : number): void
+  {
+    let time = this._remainingSeconds.getValue();
+    time += seconds;
+    this._remainingSeconds.next(time);
+  }
+
+  stop(): void
+  {
+    this._timerDecrementing.set(false);
     this._stop.next();
   }
 
-  async pomodoroNext() : Promise<void>
+  private _intervalStarted(): void
   {
-    this.pomodoroStop();
-    let settings = await this._settingService.getSettings();
-    
-    this._nextStep(settings);
-  }
-
-  private _getSeconds(settings: Settings): number
-  {
-    let time: number;
-
-    switch (this._cycleService.getCycleType()) {
-      case 'idle':
-      case 'work':
-        time = settings.workTime;
-        break;
-      case 'short-break':
-        time = settings.shortBreakTime;
-        break;
-      case 'long-break':
-        time = settings.longBreakTime;
-        break;
-    }
-
-    return time * 60;
-  }
-
-  private _start(numberSeconds : number) : void
-  {
-    this.pomodoroStop();
-
-    this._timerStarted.set(true);
-    this._remainingSeconds.next(numberSeconds);
-    interval(1000)
-      .pipe(
-        takeUntil(this._stop),
-        takeWhile(() => this._remainingSeconds.value > 0)
-      )
-      .subscribe(() => {
-        const next = this._remainingSeconds.value - 1;
-        this._remainingSeconds.next(next);
-
-        if (next === 0) {
-          this._finish.next();
-          this._finishSession();
-        }
-      })
-    ;
-  }
-
-  private async _finishSession() : Promise<void>
-  {
-    this.pomodoroStop();
-    this._timerStarted.set(false);
-    this._sessionStarted.set(false);
-    let settings = await this._settingService.getSettings();
-
-    if (settings.enableWaiting) {
-      this._confirmationWaiting();
-    } else {
-      this._nextStep(settings);
-    }
-  }
-
-  private async _confirmationWaiting() : Promise<void>
-  {
-    this.pomodoroStop();
-    let settings = await this._settingService.getSettings();
-
-    this._remainingSeconds.next(settings.maxConfirmationTime * 60);
-    this._timerStarted.set(true);
-    this._sessionStarted.set(true);
-    this._waitingConfirmation.set(true);
-    
     interval(1000)
       .pipe(
         takeUntil(this._stop),
@@ -450,19 +353,139 @@ export class CounterService {
 
         if (next === 0) {
           this._finish.next();
-          this.pomodoroReset();
         }
       });
   }
+}
 
-  private _nextStep(settings: Settings): void
+@Injectable({
+  providedIn: 'root'
+})
+export class CounterService {
+  public cycle: Observable<Cycle>;
+  public sessionTimer: Timer;
+  public waitingTimer: Timer;
+  private _settings: Settings | null;
+  private _time: number;
+
+  constructor(
+    private _cycleService: CycleService,
+    private readonly _workSessionHttpService: WorkSessionHttpService,
+    _settingService: SettingsService,
+  ) {
+    this.cycle = this._cycleService.cycle;
+    this.sessionTimer = new Timer();
+    this.waitingTimer = new Timer();
+    this._settings = null;
+    this._time = 0;
+    _settingService.settings
+      .subscribe(
+        settings => {
+          this._settings = settings;
+          this._time = this._getSeconds();
+          this.sessionTimer.setTime(this._time);
+        }
+      );
+  }
+
+  pomodoroStart(): void
   {
-    this._cycleService.next(settings);
+    this._cycleService.start();
+    this._time = this._getSeconds();
 
-    this._timerStarted.set(false);
-    this._sessionStarted.set(false);
-    this._waitingConfirmation.set(false);
-    this._remainingSeconds.next(this._getSeconds(settings));
+    this.sessionTimer.setTime(this._time);
+    this.sessionTimer.start();
+    this.sessionTimer.finish.subscribe(
+      () => {
+        this._finishSession();
+      }
+    )
+  }
+
+  pomodoroContinue(): void
+  {
+    this.sessionTimer.continue();
+  }
+
+  pomodoroIncrement(seconds: number): void
+  {
+    this._time += seconds;
+    this.sessionTimer.addTime(seconds);
+  }
+
+  pomodoroRewind(): void
+  {
+    this._time = this._getSeconds();
+    this.sessionTimer.reset();
+    this.sessionTimer.setTime(this._time);
+  }
+
+  pomodoroReset(): void
+  {
+    this.sessionTimer.reset();
+    this.waitingTimer.reset();
+    this._cycleService.reset();
+    this._time = this._getSeconds();
+    this.sessionTimer.setTime(this._time);
+  }
+
+  pomodoroStop(): void
+  {
+    this.sessionTimer.stop();
+  }
+
+  pomodoroNext(): void
+  {
+    this.waitingTimer.reset(); 
+    this.sessionTimer.reset();
+    this._nextStep();
+  }
+
+  private _getSeconds(): number
+  {
+    let time: number;
+
+    switch (this._cycleService.getCycleType()) {
+      case 'idle':
+      case 'work':
+        time = this._settings!.workTime;
+        break;
+      case 'short-break':
+        time = this._settings!.shortBreakTime;
+        break;
+      case 'long-break':
+        time = this._settings!.longBreakTime;
+        break;
+    }
+
+    return time * 60;
+  }
+
+  private _finishSession(): void
+  {
+    this.sessionTimer.reset();
+
+    if (this._settings!.enableWaiting) {
+      this._confirmationWaiting();
+    } else {
+      this._nextStep();
+    }
+  }
+
+  private _confirmationWaiting(): void
+  {
+    this.waitingTimer.setTime(this._settings!.maxConfirmationTime * 60);
+    this.waitingTimer.start();
+  }
+
+  private _nextStep(): void
+  {
+    if (this._cycleService.getCycleType() === 'work') {
+      this._workSessionHttpService.saveNewToastService(this._time / 60);
+    }
+
+    this._cycleService.next(this._settings!);
+    this.sessionTimer.setTime(this._getSeconds());
   }
 }
 
