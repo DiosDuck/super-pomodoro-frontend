@@ -476,6 +476,9 @@ export class CounterService {
   {
     this.waitingTimer.setTime(this._settings!.maxConfirmationTime * 60);
     this.waitingTimer.start();
+    this.waitingTimer.finish.subscribe(
+      () => this.pomodoroReset()
+    );
   }
 
   private _nextStep(): void

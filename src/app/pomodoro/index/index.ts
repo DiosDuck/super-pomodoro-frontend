@@ -88,9 +88,6 @@ export class Index implements OnInit, OnDestroy {
         this.alarm.play();
       }
     });
-    this.counterService.waitingTimer.finish.subscribe(() => {
-      this.counterService.pomodoroReset();
-    });
   }
 
   ngOnDestroy(): void {
