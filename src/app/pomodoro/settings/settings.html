@@ -18,9 +18,18 @@
             <input id="number-of-cycles" type="number" class="settings-form__block--input" formControlName="numberOfCycles" placeholder="0" autocomplete="off">
         </div>
         <div class="settings-form__block">
-            <label for="max-confirmation-time" class="settings-form__block--label">Waiting time (minutes):</label>
-            <input id="max-confirmation-time" type="number" class="settings-form__block--input" formControlName="maxConfirmationTime" placeholder="0" autocomplete="off">
+            <label for="enable-waiting" class="settings-form__block--label">Enable confirmation:</label>
+            <input id="enable-waiting" type="checkbox" class="settings-form__block--input" formControlName="enableWaiting" (change)="updateWaitingTime()">
         </div>
+        @if (enableWaitingTime()) {
+            <div class="settings-form__block">
+                <label for="max-confirmation-time" class="settings-form__block--label">Waiting time (minutes):</label>
+                <input id="max-confirmation-time" type="number" class="settings-form__block--input" formControlName="maxConfirmationTime" placeholder="0" autocomplete="off">
+            </div>
+        }
+        @else {
+            <div class="settings-form__block settings-form__block--empty"></div>
+        }
         <div class="settings-form__buttons">
             <button type="button" class="settings-form__button settings-form__button--secondary" routerLink="/pomodoro">Go back</button>
             <button type="submit" class="settings-form__button settings-form__button--primary" [disabled]="!settingsForm.valid">Save</button>

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from "@angular/core";
+import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { SettingsService, Settings as SettingsModel } from "../pomodoro.services";
 import { Router, RouterLink } from "@angular/router";
@@ -19,7 +19,9 @@ export class Settings implements OnInit {
         numberOfCycles: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
         maxConfirmationTime: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
         enableWaiting: new FormControl(true),
-    })
+    });
+
+    enableWaitingTime = signal<boolean>(false);
 
     ngOnInit(): void 
     {
@@ -30,6 +32,8 @@ export class Settings implements OnInit {
             this.settingsForm.get('longBreakTime')!.setValue(settings.longBreakTime);
             this.settingsForm.get('numberOfCycles')!.setValue(settings.cyclesBeforeLongBreak);
             this.settingsForm.get('maxConfirmationTime')!.setValue(settings.maxConfirmationTime);
+            this.settingsForm.get('enableWaiting')!.setValue(settings.enableWaiting);
+            this.enableWaitingTime.set(settings.enableWaiting);
         })
     }
 
@@ -48,5 +52,15 @@ export class Settings implements OnInit {
 
         this.settingsService.updateSettings(settings);
         this.router.navigateByUrl('/pomodoro');
+    }
+
+    updateWaitingTime(): void
+    {
+        if (this.settingsForm.get('enableWaiting')!.getRawValue()) {
+            this.enableWaitingTime.set(true);
+        } else {
+            this.enableWaitingTime.set(false);
+            this.settingsForm.get('maxConfirmationTime')!.setValue(0);
+        }
     }
 }

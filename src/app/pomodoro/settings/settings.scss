@@ -22,7 +22,7 @@ $blue-color-1: #4ba9c8;
         gap: 1.5rem;
 
         @media (max-width: 600px) {
-            align-items: center;
+            align-items: start;
         }
 
         &__block {
@@ -41,6 +41,15 @@ $blue-color-1: #4ba9c8;
                 display: block;
                 font-size: 2.5rem;
                 color: var(--gray-color-3);
+            }
+
+            &--empty {
+                height: calc(3rem + 1px);
+                width: 100%;
+
+                @media (max-width: 600px) {
+                    height: calc(6.5rem + 1px);
+                }
             }
 
             &--input {
@@ -68,6 +77,31 @@ $blue-color-1: #4ba9c8;
 
                 &:hover, &:focus {
                     border-color: var(--black-color-2);
+                }
+
+                &[type='checkbox'] {
+                    height: 2.5rem;
+                    width: 0;
+
+                    &::after {
+                        content: '\2713';
+                        color: var(--white-color-1);
+                        display: inline-block;
+                        width: 2.5rem;
+                        border-radius: 0.75rem;
+                        border: 1px solid var(--black-color-2);
+                        background-color: var(--white-color-1);;
+                        transform: translateY(.5rem) translateX(-3rem);
+                        text-align: center;
+
+                        @media (max-width: 600px) {
+                            transform: none;
+                        }
+                    }
+
+                    &:checked::after {
+                        background-color: var(--black-color-2);
+                    }
                 }
             }
         }
