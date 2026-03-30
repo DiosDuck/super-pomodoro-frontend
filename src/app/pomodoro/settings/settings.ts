@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { SettingsService, Settings as SettingsModel } from "../pomodoro.services";
+import { SettingsService, Settings as SettingsModel } from "../services/settings.service";
 import { Router, RouterLink } from "@angular/router";
 
 @Component({
@@ -25,7 +25,7 @@ export class Settings implements OnInit {
 
     ngOnInit(): void 
     {
-        this.settingsService.settings.subscribe(settings => {
+        this.settingsService.settings$.subscribe(settings => {
             this.settingsForm.touched;
             this.settingsForm.get('workTime')!.setValue(settings.workTime);
             this.settingsForm.get('shortBreakTime')!.setValue(settings.shortBreakTime);

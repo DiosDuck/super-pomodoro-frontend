@@ -1,7 +1,8 @@
 import { Component, computed, inject, OnDestroy, OnInit, signal } from '@angular/core';
-import { CounterService, cycleType } from '../pomodoro.services';
 import { RouterLink } from "@angular/router";
+import { CounterService } from '../services/counter.service';
 import { Title } from '@angular/platform-browser';
+import { cycleType } from '../services/cycle.service';
 
 @Component({
   selector: 'app-pomodoro-index',
@@ -12,7 +13,7 @@ import { Title } from '@angular/platform-browser';
 export class Index implements OnInit, OnDestroy {
   counterService = inject(CounterService);
   title = inject(Title);
-  numberOfCycles = signal<number>(0);
+  numberOfCycles = signal(0);
   cycleState = signal<cycleType>('idle');
   header = computed(
     () => {
@@ -32,72 +33,51 @@ export class Index implements OnInit, OnDestroy {
       }
     }
   );
-  timer = signal<number>(0);
+  timer = signal(0);
   minutes = computed(() => Math.floor(this.timer() / 60).toString().padStart(2, "0"));
   seconds = computed(() => (this.timer() % 60).toString().padStart(2, "0"));
-  isWaitingForConfirmation = this.counterService.waitingTimer.timerStarted;
-  timerStarted = computed(() => this.counterService.sessionTimer.timerDecrementing() || this.counterService.waitingTimer.timerDecrementing());
-  sessionStarted = computed(() => this.counterService.sessionTimer.timerStarted() || this.counterService.waitingTimer.timerStarted());;
-  alarm : HTMLAudioElement | null = null;
+  isWaitingForConfirmation = signal(false);
+  timerStarted = signal(false);
+  timerDecrementing = signal(false);
+  alarm : HTMLAudioElement = new Audio('assets/audio/alarm-clock.mp3');
 
-  titleValue = computed(
-    () => {
-      let start: string;
-      if (this.isWaitingForConfirmation()) {
-        start = 'Confirm';
-      } else {
-        switch (this.cycleState()) {
-          case 'idle':
-            return 'Pomodoro';
-          case 'work':
-            start = 'Work';
-            break;
-          case 'short-break':
-          case 'long-break':
-            start = 'Break';
-            break;
+  ngOnInit(): void {
+    this.counterService.timer$.subscribe(
+      val => {
+        this.timer.set(val);
+        this.title.setTitle(this.getTitleName());
+      }
+    );
+    this.counterService.timerStarted$.subscribe(
+      val => this.timerStarted.set(val)
+    );
+    this.counterService.timerDecrementing$.subscribe(
+      val => this.timerDecrementing.set(val)
+    );
+    this.counterService.isWaitingForConfirmation$.subscribe(
+      val => {
+        this.isWaitingForConfirmation.set(val);
+        if (val) {
+          this.alarm.currentTime = 0;
+          this.alarm.play();
         }
       }
-
-      return `${start} ${this.minutes()}:${this.seconds()}`;
-    }
-  );
-
-  ngOnInit(): void 
-  {
-    this.alarm = new Audio('assets/audio/alarm-clock.mp3');
-    this.counterService.cycle.subscribe((cycle) => {
-      this.cycleState.set(cycle.currentCycle);
-      this.numberOfCycles.set(cycle.currentNumberOfCycle - 1);
-    })
-    this.counterService.waitingTimer.remainingSeconds.subscribe((time: number) => {
-      if (this.isWaitingForConfirmation()) {
-        this.timer.set(time);
-        this.title.setTitle(this.titleValue());
-      }
-    });
-    this.counterService.sessionTimer.remainingSeconds.subscribe((time: number) => {
-      if (!this.isWaitingForConfirmation()) {
-        this.timer.set(time);
-        this.title.setTitle(this.titleValue());
-      }
-    });
-    this.counterService.sessionTimer.finish.subscribe(() => {
-      if (this.alarm) {
-        this.alarm.currentTime = 0;
-        this.alarm.play();
-      }
-    });
+    );
+    this.counterService.currentCycleType$.subscribe(
+      val => this.cycleState.set(val)
+    );
+    this.counterService.currentNumberOfCycles$.subscribe(
+      val => this.numberOfCycles.set(val - 1)
+    );
   }
 
   ngOnDestroy(): void {
     this.counterService.pomodoroRewind();
-    this.alarm = null;
   }
 
   onStart(): void
   {
-    if (this.sessionStarted()) {
+    if (this.timerStarted()) {
       this.counterService.pomodoroContinue()
     } else {
       this.alarm?.pause();
@@ -112,7 +92,7 @@ export class Index implements OnInit, OnDestroy {
 
   onNext(): void
   {
-    this.alarm?.pause();
+    this.alarm.pause();
     this.counterService.pomodoroNext();
   }
 
@@ -129,5 +109,27 @@ export class Index implements OnInit, OnDestroy {
   onReset(): void
   {
     this.counterService.pomodoroReset();
+  }
+
+  private getTitleName(): string
+  {
+    let start: string;
+    if (this.isWaitingForConfirmation()) {
+      start = 'Confirm';
+    } else {
+      switch (this.cycleState()) {
+        case 'idle':
+          return 'Pomodoro';
+        case 'work':
+          start = 'Work';
+          break;
+        case 'short-break':
+        case 'long-break':
+          start = 'Break';
+          break;
+      }
+    }
+
+    return `${start} ${this.minutes()}:${this.seconds()}`;
   }
 }

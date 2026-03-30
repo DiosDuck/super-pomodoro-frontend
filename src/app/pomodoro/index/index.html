@@ -18,7 +18,7 @@
                 <span class="pomodoro-button__text">+15</span>
             </button>
         }
-        @else if (!timerStarted()) {
+        @else if (!timerDecrementing()) {
             <button class="pomodoro-button" (click)="onStart()">
                 <svg class="pomodoro-button__icon">
                     <use xlink:href="assets/icons/sprite.svg#icon-play"></use>
@@ -60,7 +60,7 @@
                 </button>
             }
         }
-        <button class="pomodoro-button" routerLink="/pomodoro/settings" [disabled]="sessionStarted()">
+        <button class="pomodoro-button" routerLink="/pomodoro/settings" [disabled]="timerStarted()">
             <svg class="pomodoro-button__icon">
                 <use xlink:href="assets/icons/sprite.svg#icon-settings"></use>
             </svg>
