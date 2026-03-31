@@ -1,9 +1,9 @@
-import { computed, Injectable, signal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { Settings, SettingsService } from './settings.service';
 import { CycleService, cycleType } from './cycle.service';
 import { WorkSessionService } from './work-session.service';
 import { Timer, TimerFactory } from './timer.service';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'

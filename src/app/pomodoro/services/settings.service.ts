@@ -28,10 +28,10 @@ export class SettingsService {
   private readonly _settingsKey = 'pomodoro.settings';
 
   constructor(
-    private _localStorageService: LocalStorageService,
-    private _userService: UserService,
-    private _toastService: ToastService,
-    private _http: HttpClient,
+    private localStorageService: LocalStorageService,
+    private userService: UserService,
+    private toastService: ToastService,
+    private http: HttpClient,
   ) {
     this.settingsSubject = new BehaviorSubject<Settings>(this.getDefaultSettings());
     this.settings$ = this.settingsSubject.asObservable();
@@ -40,7 +40,7 @@ export class SettingsService {
 
   loadSettings(): void 
   {
-    this._userService.waitFirstUser()
+    this.userService.waitFirstUser()
       .pipe(
         switchMap(
           user => user === null ? this.loadLocalStorageSettings() : this.loadUserSettings()
@@ -56,7 +56,7 @@ export class SettingsService {
 
   updateSettings(settings: Settings): void 
   {
-    this._userService.waitFirstUser()
+    this.userService.waitFirstUser()
       .pipe(
         switchMap(
           user => user === null ? this.updateLocalStorageSettings(settings) : this.updateUserSettings(settings) 
@@ -78,19 +78,19 @@ export class SettingsService {
   private async loadUserSettings(): Promise<Settings>
   {
     try {
-      let settingsHttp = await firstValueFrom(this._http.get<SettingsHttp>('/api/pomodoro/settings'));
+      let settingsHttp = await firstValueFrom(this.http.get<SettingsHttp>('/api/pomodoro/settings'));
       let settings = this.castToSettings(settingsHttp);
       return settings;
     } catch (err) {
-      this._toastService.addToast('First settings created', 'note');
+      this.toastService.addToast('First settings created', 'note');
     }
 
     let settings = this.getLocalStorageSettings();
     let settingsHttp = this.castToHttpSettings(settings);
     try {
-      await firstValueFrom(this._http.put('/api/pomodoro/settings', settingsHttp));
+      await firstValueFrom(this.http.put('/api/pomodoro/settings', settingsHttp));
     } catch (err) {
-      this._toastService.addToast('Error creating settings, please refresh the page', 'error', 10);
+      this.toastService.addToast('Error creating settings, please refresh the page', 'error', 10);
     }
 
     return settings;
@@ -111,9 +111,9 @@ export class SettingsService {
   {
     let settingsHttp = this.castToHttpSettings(settings);
     try {
-      await firstValueFrom(this._http.post('/api/pomodoro/settings', settingsHttp));
+      await firstValueFrom(this.http.post('/api/pomodoro/settings', settingsHttp));
     } catch (err) {
-      this._toastService.addToast('Error on saving the settings, please try again!', 'error', 10);
+      this.toastService.addToast('Error on saving the settings, please try again!', 'error', 10);
     }
 
     return settings;
@@ -121,7 +121,7 @@ export class SettingsService {
 
   private getLocalStorageSettings(): Settings
   {
-    let data = this._localStorageService.getJsonParsed(this._settingsKey);
+    let data = this.localStorageService.getJsonParsed(this._settingsKey);
     if (data !== null && 'type' in data && data.type === this._settingsKey) {
       return data;
     }
@@ -131,7 +131,7 @@ export class SettingsService {
 
   private setLocalStorageSettings(settings: Settings): void
   {
-    this._localStorageService.parseAndSet(
+    this.localStorageService.parseAndSet(
       this._settingsKey, 
       settings
     );

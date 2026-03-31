@@ -11,18 +11,18 @@ export class WorkSessionService {
   private _isLoggedIn = false;
 
   constructor(
-    private readonly _userService : UserService,
-    private readonly _toastService : ToastService,
-    private readonly _http : HttpClient,
+    private readonly userService : UserService,
+    private readonly toastService : ToastService,
+    private readonly http : HttpClient,
   ) {
-    this._userService.user.subscribe(
+    this.userService.user.subscribe(
       (user) => this._isLoggedIn = (user !== null)
     );
   }
 
   saveNewToastService(workTime : number) {
     if (this._isLoggedIn) {
-      this._http.put(
+      this.http.put(
           '/api/pomodoro/session',
           {
             workTime: workTime,
@@ -32,8 +32,8 @@ export class WorkSessionService {
           take(1),
         )
         .subscribe({
-          next: () => this._toastService.addToast('Saved to your profile', 'note'),
-          error: () => this._toastService.addToast('There has been an error saving', 'error'),
+          next: () => this.toastService.addToast('Saved to your profile', 'note'),
+          error: () => this.toastService.addToast('There has been an error saving', 'error'),
         })
       ;
     }
