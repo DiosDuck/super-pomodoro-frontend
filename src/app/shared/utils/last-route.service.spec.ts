@@ -1,8 +1,7 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { LastRouteService } from "./last-route.service";
 import { TestBed } from "@angular/core/testing";
 import { Router } from "@angular/router";
-import { firstValueFrom } from "rxjs";
 
 describe('Last Route Service', () => {
     let successRouter = {navigateByUrl: vi.fn().mockResolvedValue(true), url: '/success'};

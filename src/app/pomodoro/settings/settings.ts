@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { SettingsService, Settings as SettingsModel } from "../services/settings.service";
-import { Router, RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 
 @Component({
     templateUrl: "settings.html",
     styleUrl: "settings.scss",
-    imports: [ReactiveFormsModule, RouterLink]
+    imports: [ReactiveFormsModule]
 })
 export class Settings implements OnInit {
     settingsService = inject(SettingsService);
@@ -51,6 +51,11 @@ export class Settings implements OnInit {
         }
 
         this.settingsService.updateSettings(settings);
+        this.router.navigateByUrl('/pomodoro');
+    }
+
+    onBack(): void
+    {
         this.router.navigateByUrl('/pomodoro');
     }
 
