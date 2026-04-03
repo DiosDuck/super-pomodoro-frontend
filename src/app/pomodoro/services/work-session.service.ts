@@ -8,20 +8,22 @@ import { take } from "rxjs";
   providedIn: 'root'
 })
 export class WorkSessionService {
-  private _isLoggedIn = false;
+  private isLoggedIn = false;
 
   constructor(
     private readonly userService : UserService,
     private readonly toastService : ToastService,
     private readonly http : HttpClient,
   ) {
-    this.userService.user.subscribe(
-      (user) => this._isLoggedIn = (user !== null)
+    this.userService.user$.subscribe(
+      (user) => {
+        this.isLoggedIn = user !== null;
+      }
     );
   }
 
   saveNewToastService(workTime : number) {
-    if (this._isLoggedIn) {
+    if (this.isLoggedIn) {
       this.http.put(
           '/api/pomodoro/session',
           {

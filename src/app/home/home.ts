@@ -16,6 +16,6 @@ export class Home implements OnInit{
   navItems = NAV_MENU_ITEMS;
 
   ngOnInit(): void {
-    this._userService.user.subscribe((user) => this.user.set(user));
+    this._userService.user$.subscribe((user) => this.user.set(user));
   }
 }

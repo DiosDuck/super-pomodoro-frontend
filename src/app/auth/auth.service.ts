@@ -80,7 +80,7 @@ export class AuthService {
 
     getObservableUser(): Observable<NullableUser>
     {
-        return this._userService.user;
+        return this._userService.user$;
     }
 
     register(registerData : RegisterData): Observable<Object> 
@@ -142,17 +142,17 @@ export class AuthService {
   providedIn: 'root'
 })
 export class UserService {
-    private _user = new ReplaySubject<NullableUser>(1);
-    user = this._user.asObservable();
+    private userSubject = new ReplaySubject<NullableUser>(1);
+    user$ = this.userSubject.asObservable();
 
     waitFirstUser() : Observable<NullableUser>
     {
-        return this.user.pipe(filter(user => undefined !== user), take(1));
+        return this.user$.pipe(filter(user => undefined !== user), take(1));
     }
 
     setUser(user: NullableUser): void
     {
-        this._user.next(user);
+        this.userSubject.next(user);
     }
 }
 

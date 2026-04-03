@@ -1,36 +1,32 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { Settings as SettingsComponent } from "./settings";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Observable } from "rxjs";
 import { Settings as SettingsModel, SettingsService } from "../services/settings.service";
 import { Router } from "@angular/router";
-
-class SettingsServiceMock {
-    settingsSubject = new BehaviorSubject<SettingsModel>({
-        workTime: 25,
-        shortBreakTime: 5,
-        longBreakTime: 15,
-        cyclesBeforeLongBreak: 4,
-        maxConfirmationTime: 1,
-        enableWaiting: true,
-        type: 'pomodoro.settings',
-    });
-
-    settings$ = this.settingsSubject.asObservable();
-
-    updateSettings = vi.fn();
-    
-}
 
 describe('Settings Component', () => {
     let fixure: ComponentFixture<SettingsComponent>;
     let component: SettingsComponent;
     let nativeElement: HTMLElement;
-    let settingsServiceMock: SettingsServiceMock;
-    const routerMock = {navigateByUrl: vi.fn().mockResolvedValue(true)}
+    let settingsSubject: BehaviorSubject<SettingsModel>;
+    let settingsServiceMock: { updateSettings: () => Mock, settings$: Observable<SettingsModel> }
+    const routerMock = { navigateByUrl: vi.fn().mockResolvedValue(true) };
 
     beforeEach(() => {
-        settingsServiceMock = new SettingsServiceMock();
+        settingsSubject = new BehaviorSubject<SettingsModel>({
+            workTime: 25,
+            shortBreakTime: 5,
+            longBreakTime: 15,
+            cyclesBeforeLongBreak: 4,
+            maxConfirmationTime: 1,
+            enableWaiting: true,
+            type: 'pomodoro.settings',
+        });
+        settingsServiceMock = {
+            updateSettings: vi.fn(),
+            settings$: settingsSubject.asObservable()
+        }
 
         TestBed.configureTestingModule({
             imports: [SettingsComponent],
@@ -51,7 +47,7 @@ describe('Settings Component', () => {
         expect(nativeElement.querySelector<HTMLInputElement>('#enable-waiting')?.checked).toBe(true);
         expect(nativeElement.querySelector<HTMLInputElement>('#max-confirmation-time')).toBeTruthy();
 
-        settingsServiceMock.settingsSubject.next(
+        settingsSubject.next(
             {
                 workTime: 25,
                 shortBreakTime: 5,

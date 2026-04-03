@@ -22,7 +22,7 @@ export class Menu implements OnInit {
   onSelect = output<navId>();
 
   ngOnInit(): void {
-    this.userService.user.subscribe(
+    this.userService.user$.subscribe(
       user => this.user.set(user)
     );
   }

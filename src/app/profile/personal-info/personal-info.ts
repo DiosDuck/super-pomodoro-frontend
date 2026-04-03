@@ -19,7 +19,7 @@ export class PersonalInfo implements OnInit {
     })
 
     ngOnInit(): void {
-        this._userService.user.subscribe(
+        this._userService.user$.subscribe(
             user => {
                 this.user.set(user);
             }
