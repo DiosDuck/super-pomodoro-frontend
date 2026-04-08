@@ -1,33 +1,30 @@
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
 import { Settings as SettingsComponent } from "./settings";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { BehaviorSubject, Observable } from "rxjs";
-import { Settings as SettingsModel, SettingsService } from "../services/settings.service";
+import { BehaviorSubject, Observable, of } from "rxjs";
+import { Settings as SettingsModel, SettingsService, POMODORO_SETTINGS_KEY } from "../services/settings.service";
 import { Router } from "@angular/router";
 
 describe('Settings Component', () => {
     let fixure: ComponentFixture<SettingsComponent>;
     let component: SettingsComponent;
     let nativeElement: HTMLElement;
-    let settingsSubject: BehaviorSubject<SettingsModel>;
-    let settingsServiceMock: { updateSettings: () => Mock, settings$: Observable<SettingsModel> }
+    let settingsSubject = new BehaviorSubject<SettingsModel>({
+        workTime: 25,
+        shortBreakTime: 5,
+        longBreakTime: 15,
+        cyclesBeforeLongBreak: 4,
+        maxConfirmationTime: 1,
+        enableWaiting: true,
+        type: POMODORO_SETTINGS_KEY,
+    });
+    const settingsServiceMock = {
+        updateSettings: vi.fn(),
+        settings$: settingsSubject.asObservable()
+    };
     const routerMock = { navigateByUrl: vi.fn().mockResolvedValue(true) };
 
     beforeEach(() => {
-        settingsSubject = new BehaviorSubject<SettingsModel>({
-            workTime: 25,
-            shortBreakTime: 5,
-            longBreakTime: 15,
-            cyclesBeforeLongBreak: 4,
-            maxConfirmationTime: 1,
-            enableWaiting: true,
-            type: 'pomodoro.settings',
-        });
-        settingsServiceMock = {
-            updateSettings: vi.fn(),
-            settings$: settingsSubject.asObservable()
-        }
-
         TestBed.configureTestingModule({
             imports: [SettingsComponent],
             providers: [
@@ -55,7 +52,7 @@ describe('Settings Component', () => {
                 cyclesBeforeLongBreak: 4,
                 maxConfirmationTime: 1,
                 enableWaiting: false,
-                type: 'pomodoro.settings',
+                type: POMODORO_SETTINGS_KEY,
             }
         );
         fixure.detectChanges();
@@ -88,6 +85,15 @@ describe('Settings Component', () => {
     });
 
     it('submit', () => {
+        const valueSubmited = {
+            workTime: 30,
+            shortBreakTime: 5,
+            longBreakTime: 15,
+            cyclesBeforeLongBreak: 4,
+            maxConfirmationTime: 1,
+            enableWaiting: false,
+            type: POMODORO_SETTINGS_KEY,
+        };
         fixure.detectChanges();
 
         let workTime = component.settingsForm.get('workTime')!;
@@ -97,17 +103,10 @@ describe('Settings Component', () => {
         expect(component.settingsForm.valid).toBe(true);
 
         let submitButton = nativeElement.querySelector<HTMLButtonElement>('.settings-form__button--primary')!;
+        settingsServiceMock.updateSettings.mockReturnValue(of(valueSubmited));
         submitButton.click();
         expect(settingsServiceMock.updateSettings).toBeCalledWith(
-            {
-                workTime: 30,
-                shortBreakTime: 5,
-                longBreakTime: 15,
-                cyclesBeforeLongBreak: 4,
-                maxConfirmationTime: 1,
-                enableWaiting: true,
-                type: 'pomodoro.settings',
-            }
+            valueSubmited
         );
         expect(routerMock.navigateByUrl).toBeCalledWith('/pomodoro');
     })

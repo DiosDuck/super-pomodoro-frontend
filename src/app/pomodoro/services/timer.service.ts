@@ -5,11 +5,11 @@ export class Timer {
   private stopSubject = new Subject<void>();
   private remainingSecondsSubject = new BehaviorSubject<number>(0);
   private finishSubject = new Subject<void>();
-  private timerChangedSubject = new Subject<void>();
+  private timerStatusChangedSubject = new Subject<void>();
 
   public remainingSeconds$ = this.remainingSecondsSubject.asObservable();
   public finish$ = this.finishSubject.asObservable();
-  public timerChanged$ = this.timerChangedSubject.asObservable();
+  public timerStatusChanged$ = this.timerStatusChangedSubject.asObservable();
 
   private timerStarted = false;
   private timerDecrementing = false;
@@ -26,38 +26,39 @@ export class Timer {
 
   setTime(time : number): void
   {
-    this.stop();
+    this._stop();
 
     this.remainingSecondsSubject.next(time);
   }
 
   start(): void 
   {
-    this.stop();
+    this._stop();
 
     this.timerStarted = true;
     this.timerDecrementing = true;
-    this.timerChangedSubject.next();
+    this.timerStatusChangedSubject.next();
     
     this._intervalStarted();
   }
 
   continue(): void
   {
-    this.stop();
+    this._stop();
 
     this.timerDecrementing = true;
-    this.timerChangedSubject.next();
+    this.timerStatusChangedSubject.next();
 
     this._intervalStarted();
   }
 
   reset(): void
   {
-    this.stop();
+    this._stop();
 
     this.timerStarted = false;
-    this.timerChangedSubject.next();
+    this.timerDecrementing = false;
+    this.timerStatusChangedSubject.next();
   }
 
   addTime(seconds : number): void
@@ -70,8 +71,8 @@ export class Timer {
   stop(): void
   {
     this.timerDecrementing = false;
-    this.timerChangedSubject.next();
-    this.stopSubject.next();
+    this.timerStatusChangedSubject.next();
+    this._stop();
   }
 
   private _intervalStarted(): void
@@ -86,9 +87,17 @@ export class Timer {
         this.remainingSecondsSubject.next(next);
 
         if (next === 0) {
+          this.timerStarted = false;
+          this.timerDecrementing = false;
+          this.timerStatusChangedSubject.next();
           this.finishSubject.next();
         }
       });
+  }
+
+  private _stop(): void
+  {
+    this.stopSubject.next();
   }
 }
 

@@ -15,14 +15,14 @@ export class WorkSessionService {
     private readonly toastService : ToastService,
     private readonly http : HttpClient,
   ) {
-    this.userService.user$.subscribe(
+    this.userService.waitFirstUser().subscribe(
       (user) => {
         this.isLoggedIn = user !== null;
       }
     );
   }
 
-  saveNewToastService(workTime : number) {
+  saveNewWorkSession(workTime : number) {
     if (this.isLoggedIn) {
       this.http.put(
           '/api/pomodoro/session',

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { SettingsService, Settings as SettingsModel } from "../services/settings.service";
+import { SettingsService, Settings as SettingsModel, POMODORO_SETTINGS_KEY } from "../services/settings.service";
 import { Router } from "@angular/router";
 
 @Component({
@@ -47,11 +47,13 @@ export class Settings implements OnInit {
             cyclesBeforeLongBreak: value.numberOfCycles!,
             maxConfirmationTime: value.maxConfirmationTime!,
             enableWaiting: value.enableWaiting!,
-            type: 'pomodoro.settings',
+            type: POMODORO_SETTINGS_KEY,
         }
-
-        this.settingsService.updateSettings(settings);
-        this.router.navigateByUrl('/pomodoro');
+        this.settingsService
+            .updateSettings(settings)
+            .subscribe(
+                () => this.router.navigateByUrl('/pomodoro'),
+            );
     }
 
     onBack(): void

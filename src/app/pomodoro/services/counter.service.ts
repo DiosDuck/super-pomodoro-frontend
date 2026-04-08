@@ -65,7 +65,7 @@ export class CounterService {
         );
 
         // when timer status changes
-        this.sessionTimer.timerChanged$.subscribe(
+        this.sessionTimer.timerStatusChanged$.subscribe(
             () => {
                 if (!this.isWaitingForConfimationSubject.value) {
                     this.timerStartedSubject.next(this.sessionTimer.isTimerStarted);
@@ -73,7 +73,7 @@ export class CounterService {
                 }
             }
         );
-        this.waitingTimer.timerChanged$.subscribe(
+        this.waitingTimer.timerStatusChanged$.subscribe(
             () => {
                 if (this.isWaitingForConfimationSubject.value) {
                     this.timerStartedSubject.next(this.waitingTimer.isTimerStarted);
@@ -186,7 +186,7 @@ export class CounterService {
     {
         this.isWaitingForConfimationSubject.next(false);
         if (this.cycleService.getCycleType() === 'work') {
-            this.workSessionService.saveNewToastService(this.totalSessionTime);
+            this.workSessionService.saveNewWorkSession(this.totalSessionTime);
         }
 
         this.cycleService.next(this.settings);

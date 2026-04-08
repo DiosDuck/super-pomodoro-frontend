@@ -2,24 +2,17 @@ import { provideHttpClient } from "@angular/common/http";
 import { HttpTestingController, provideHttpClientTesting } from "@angular/common/http/testing";
 import { TestBed } from "@angular/core/testing";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { NullableUser, UserService } from "../../auth/auth.service";
+import { UserService } from "../../auth/auth.service";
 import { ToastService } from "../../shared/utils/toast.service";
-import { BehaviorSubject, Observable } from "rxjs";
+import { of } from "rxjs";
 import { WorkSessionService } from "./work-session.service";
 
 describe('Work Session Service', () => {
     const toastServiceMock = { addToast: vi.fn() };
-    let userServiceMock: { user$: Observable<NullableUser> };
-    let userSubject: BehaviorSubject<NullableUser>;
-    let workSessionService: WorkSessionService;
+    const userServiceMock = { waitFirstUser: vi.fn() };
     let httpMock: HttpTestingController;
 
     beforeEach(() => {
-        userSubject = new BehaviorSubject<NullableUser>(null);
-        userServiceMock = {
-            user$: userSubject.asObservable()
-        };
-
         TestBed.configureTestingModule({
             providers: [
                 provideHttpClient(),
@@ -30,7 +23,6 @@ describe('Work Session Service', () => {
         });
 
         httpMock = TestBed.inject(HttpTestingController);
-        workSessionService = TestBed.inject(WorkSessionService);
     });
 
     afterEach(() => {
@@ -38,35 +30,39 @@ describe('Work Session Service', () => {
     })
 
     it('no user', () => {
-        workSessionService.saveNewToastService(1500);
+        userServiceMock.waitFirstUser.mockReturnValue(of(null));
+        let workSessionService = TestBed.inject(WorkSessionService);
+        workSessionService.saveNewWorkSession(1500);
         httpMock.expectNone('/api/pomodoro/session');
     });
 
     it('with user success', () => {
-        userSubject.next({
+        userServiceMock.waitFirstUser.mockReturnValue(of({
             username: 'test',
             email: 'test@email.com',
             displayName: 'Test',
             roles: ['ROLE_USER'],
             activatedAtTimeStamp: 0
-        });
+        }));
 
-        workSessionService.saveNewToastService(1600);
+        let workSessionService = TestBed.inject(WorkSessionService);
+        workSessionService.saveNewWorkSession(1600);
         let req = httpMock.expectOne('/api/pomodoro/session');
         req.flush({message: 'success'});
         expect(toastServiceMock.addToast).toBeCalledWith('Saved to your profile', 'note');
     });
 
     it('with user failure', () => {
-        userSubject.next({
+        userServiceMock.waitFirstUser.mockReturnValue(of({
             username: 'test',
             email: 'test@email.com',
             displayName: 'Test',
             roles: ['ROLE_USER'],
             activatedAtTimeStamp: 0
-        });
+        }));
 
-        workSessionService.saveNewToastService(1600);
+        let workSessionService = TestBed.inject(WorkSessionService);
+        workSessionService.saveNewWorkSession(1600);
         let req = httpMock.expectOne('/api/pomodoro/session');
         req.flush({message: 'error'}, {status: 500, statusText: 'Internal Server Error'});
         expect(toastServiceMock.addToast).toBeCalledWith('There has been an error saving', 'error');

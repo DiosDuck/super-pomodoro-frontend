@@ -18,6 +18,8 @@ export interface Settings extends SettingsHttp {
     type: 'pomodoro.settings',
 }
 
+export const POMODORO_SETTINGS_KEY = 'pomodoro.settings';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -25,7 +27,6 @@ export class SettingsService {
   private settingsSubject: BehaviorSubject<Settings>;
   settings$: Observable<Settings>;
 
-  private readonly _settingsKey = 'pomodoro.settings';
 
   constructor(
     private localStorageService: LocalStorageService,
@@ -54,20 +55,14 @@ export class SettingsService {
       );
   }
 
-  updateSettings(settings: Settings): void 
+  updateSettings(settings: Settings): Observable<Settings> 
   {
-    this.userService.waitFirstUser()
+    return this.userService.waitFirstUser()
       .pipe(
         switchMap(
           user => user === null ? this.updateLocalStorageSettings(settings) : this.updateUserSettings(settings) 
         )
-      )
-      .subscribe(
-        settings => {
-          this.settingsSubject.next(settings);
-          this.setLocalStorageSettings(settings);
-        }
-      )
+      );
   }
 
   getSettings(): Settings
@@ -104,6 +99,8 @@ export class SettingsService {
 
   private async updateLocalStorageSettings(settings: Settings): Promise<Settings>
   {
+    this.setLocalStorageSettings(settings);
+    this.settingsSubject.next(settings);
     return settings;
   }
   
@@ -112,36 +109,29 @@ export class SettingsService {
     let settingsHttp = this.castToHttpSettings(settings);
     try {
       await firstValueFrom(this.http.post('/api/pomodoro/settings', settingsHttp));
+      return await this.updateLocalStorageSettings(settings);
     } catch (err) {
-      this.toastService.addToast('Error on saving the settings, please try again!', 'error', 10);
+      this.toastService.addToast('Error on saving the settings, please try again later on!', 'error', 10);
+      throw err;
     }
-
-    return settings;
   }
 
   private getLocalStorageSettings(): Settings
   {
-    let data = this.localStorageService.getJsonParsed(this._settingsKey);
-    if (data !== null && 'type' in data && data.type === this._settingsKey) {
+    let data = this.localStorageService.getJsonParsed(POMODORO_SETTINGS_KEY);
+    if (data !== null && 'type' in data && data.type === POMODORO_SETTINGS_KEY) {
       return data;
     }
 
-    return this.createNewSetting();
+    return this.getDefaultSettings();
   }
 
   private setLocalStorageSettings(settings: Settings): void
   {
     this.localStorageService.parseAndSet(
-      this._settingsKey, 
+      POMODORO_SETTINGS_KEY, 
       settings
     );
-  }
-
-  private createNewSetting(): Settings
-  {
-    let setting = this.getDefaultSettings();
-    this.setLocalStorageSettings(setting);
-    return setting;
   }
 
   private castToHttpSettings(settings: Settings): SettingsHttp
@@ -152,7 +142,7 @@ export class SettingsService {
 
   private castToSettings(settingsHttp: SettingsHttp): Settings
   {
-    return {type: this._settingsKey, ...settingsHttp};
+    return {type: POMODORO_SETTINGS_KEY, ...settingsHttp};
   }
 
   private getDefaultSettings(): Settings
@@ -164,7 +154,7 @@ export class SettingsService {
       cyclesBeforeLongBreak: 4,
       maxConfirmationTime: 1,
       enableWaiting: true,
-      type: this._settingsKey,
+      type: POMODORO_SETTINGS_KEY,
     };
   }
 }
