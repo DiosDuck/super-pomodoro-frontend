@@ -27,14 +27,13 @@ export class SettingsService {
   private settingsSubject: BehaviorSubject<Settings>;
   settings$: Observable<Settings>;
 
-
   constructor(
     private localStorageService: LocalStorageService,
     private userService: UserService,
     private toastService: ToastService,
     private http: HttpClient,
   ) {
-    this.settingsSubject = new BehaviorSubject<Settings>(this.getDefaultSettings());
+    this.settingsSubject = new BehaviorSubject<Settings>(SettingsService.getDefaultSettings());
     this.settings$ = this.settingsSubject.asObservable();
     this.loadSettings();
   }
@@ -52,6 +51,19 @@ export class SettingsService {
   getSettings(): Settings
   {
     return this.settingsSubject.value;
+  }
+
+  static getDefaultSettings(): Settings
+  {
+    return {
+      workTime: 25,
+      shortBreakTime: 5,
+      longBreakTime: 15,
+      cyclesBeforeLongBreak: 4,
+      maxConfirmationTime: 1,
+      enableWaiting: true,
+      type: POMODORO_SETTINGS_KEY,
+    };
   }
 
   private loadSettings(): void 
@@ -140,7 +152,7 @@ export class SettingsService {
       return data;
     }
 
-    return this.getDefaultSettings();
+    return SettingsService.getDefaultSettings();
   }
 
   private setLocalStorageSettings(settings: Settings): void
@@ -160,18 +172,5 @@ export class SettingsService {
   private castToSettings(settingsHttp: SettingsHttp): Settings
   {
     return {type: POMODORO_SETTINGS_KEY, ...settingsHttp};
-  }
-
-  private getDefaultSettings(): Settings
-  {
-    return {
-      workTime: 25,
-      shortBreakTime: 5,
-      longBreakTime: 15,
-      cyclesBeforeLongBreak: 4,
-      maxConfirmationTime: 1,
-      enableWaiting: true,
-      type: POMODORO_SETTINGS_KEY,
-    };
   }
 }

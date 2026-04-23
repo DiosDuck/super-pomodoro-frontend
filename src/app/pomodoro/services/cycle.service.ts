@@ -12,14 +12,14 @@ export interface Cycle {
     type: 'pomodoro.cycle',
 }
 
+export const POMODORO_CYCLE_KEY = 'pomodoro.cycle';
+
 @Injectable({
   providedIn: 'root'
 })
 export class CycleService {
   private cycleSubject: BehaviorSubject<Cycle>;
   cycle$: Observable<Cycle>;
-
-  private readonly _cycleKey = 'pomodoro.cycle';
 
   constructor(
     private readonly _localStorageService: LocalStorageService,
@@ -34,7 +34,7 @@ export class CycleService {
     this.cycleSubject.next(this._createNewCycle());
   }
 
-  next(settings : Settings): void 
+  nextCycle(settings : Settings): void 
   {
     let cycle = this.cycleSubject.value;
     if (cycle.currentCycle !== 'work') {
@@ -66,10 +66,20 @@ export class CycleService {
     return this.cycleSubject.value.currentCycle;
   }
 
+  static getDefaultCycle(): Cycle
+  {
+    return {
+      currentCycle: 'idle',
+      currentNumberOfCycle: 1,
+      dateTime: new Date(),
+      type: POMODORO_CYCLE_KEY,
+    };
+  }
+
   private _loadCycle(): Cycle
   {
-    let data = this._localStorageService.getJsonParsed(this._cycleKey);
-    if (data !== null && 'type' in data && data.type === this._cycleKey) {
+    let data = this._localStorageService.getJsonParsed(POMODORO_CYCLE_KEY);
+    if (data !== null && 'type' in data && data.type === POMODORO_CYCLE_KEY) {
       let convertedData: Cycle = {
         ...data,
         dateTime: new Date(data.dateTime),
@@ -85,12 +95,7 @@ export class CycleService {
 
   private _createNewCycle(): Cycle
   {
-    let cycle: Cycle = {
-      currentCycle: 'idle',
-      currentNumberOfCycle: 1,
-      dateTime: new Date(),
-      type: this._cycleKey,
-    };
+    let cycle = CycleService.getDefaultCycle();
     this._setCycle(cycle);
     return cycle;
   }
@@ -101,10 +106,10 @@ export class CycleService {
     return date.getDate() === cycle.dateTime.getDate();
   }
 
-  public _setCycle(cycle: Cycle): void
+  private _setCycle(cycle: Cycle): void
   {
     this._localStorageService.parseAndSet(
-      this._cycleKey,
+      POMODORO_CYCLE_KEY,
       cycle
     );
   }
