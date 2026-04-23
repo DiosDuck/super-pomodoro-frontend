@@ -2,7 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { beforeEach, describe, expect, it, Mock, vi } from 'vitest';
 import { Timer } from './timer.service';
 
-describe('Timer Testing', () => {
+describe('Timer', () => {
     let timer: Timer;
     let latestValue: number | undefined;
     let finishedTimer: Mock;
