@@ -3,7 +3,7 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { passwordMatchValidator } from "../../../shared/utils/password-match.validator";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { UpdateUserService } from "../../profile.service";
-import { finalize, take } from "rxjs";
+import { finalize, switchMap, take, tap } from "rxjs";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { Router } from "@angular/router";
 import { AuthService } from "../../../auth/auth.service";
@@ -40,23 +40,19 @@ export class ChangePassword {
       )
       .pipe(
         take(1),
-        finalize(() => this.isWaiting = false)
+        tap(() => {
+          this.toastService.addToast('Password has been changed, please log in.', 'note', 10);
+          this.lastRouteService.updateLastRoute('/');
+        }),
+        switchMap(() => this.authService.logout()),
+        finalize(() => this.isWaiting = false),
       )
-      .subscribe(
-        {
-          next: () => {
-            this.toastService.addToast('Password has been changed, please log in.', 'note', 10);
-            this.authService.logout()
-              .subscribe(() => {
-                this.lastRouteService.updateLastRoute('/');
-                this.router.navigateByUrl('/auth/sign-in');
-              });
-          },
-          error: () => {
-            this.toastService.addToast('Wrong password, please introduce it again.', 'error', 10);
-          }
+      .subscribe({
+        next: () => this.router.navigateByUrl('/auth/sign-in'),
+        error: () => {
+          this.toastService.addToast('Wrong password, please introduce it again.', 'error', 10);
         }
-      )
+      })
   }
 
   isInvalid(key: string): boolean 

@@ -1,6 +1,8 @@
-import { Component, effect, input, signal, computed } from '@angular/core';
+import { Component, computed, inject, input } from '@angular/core';
 import { StatusService, StatusRequest, StatusResponse } from '../status.service';
 import { CommonModule } from '@angular/common';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { switchMap, map, filter, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-status-line',
@@ -9,9 +11,27 @@ import { CommonModule } from '@angular/common';
   styleUrl: './line.scss',
 })
 export class Line {
+  private statusService = inject(StatusService);
+
   status = input.required<StatusRequest>();
 
-  response = signal<StatusResponse>({status: 'HOLD', message: 'Waiting...'});
+  response = toSignal(
+    toObservable(this.status).pipe(
+      map(s => s.url),
+      filter(url => !!url),
+      switchMap(url =>
+        this.statusService.getResponse(url).pipe(
+          catchError(err => of(
+            'status' in err.error
+              ? err.error as StatusResponse
+              : { status: 'CRIT', message: 'Http Error' } as StatusResponse
+          ))
+        )
+      ),
+    ),
+    { initialValue: { status: 'HOLD', message: 'Waiting...' } as StatusResponse },
+  );
+
   responseStatus = computed<'waiting'|'success'|'warning'|'error'>(
     () => {
       switch(this.response().status) {
@@ -30,24 +50,5 @@ export class Line {
       }
     }
   );
-
-  constructor(private statusService: StatusService) {
-    effect(() => {
-      const url = this.status().url;
-      if (!url) {
-        return;
-      }
-
-      this.statusService.getResponse(url).subscribe({
-        next: (res) => {this.response.set(res)},
-        error: (err) => {
-          if ('status' in err.error) {
-            this.response.set(err.error);
-          } else {
-            this.response.set({status: 'CRIT', message: 'Http Error'});
-          }
-        },
-      });
-    });
-  }
 }
+

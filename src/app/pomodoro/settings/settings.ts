@@ -1,7 +1,9 @@
-import { Component, inject, OnInit, signal } from "@angular/core";
+import { Component, DestroyRef, inject, OnInit, signal } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { SettingsService, Settings as SettingsModel, POMODORO_SETTINGS_KEY } from "../services/settings.service";
 import { Router } from "@angular/router";
+import { take } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
     templateUrl: "settings.html",
@@ -11,6 +13,7 @@ import { Router } from "@angular/router";
 export class Settings implements OnInit {
     settingsService = inject(SettingsService);
     router = inject(Router);
+    private destroyRef = inject(DestroyRef);
 
     settingsForm = new FormGroup({
         workTime: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
@@ -25,16 +28,18 @@ export class Settings implements OnInit {
 
     ngOnInit(): void 
     {
-        this.settingsService.settings$.subscribe(settings => {
-            this.settingsForm.touched;
-            this.settingsForm.get('workTime')!.setValue(settings.workTime);
-            this.settingsForm.get('shortBreakTime')!.setValue(settings.shortBreakTime);
-            this.settingsForm.get('longBreakTime')!.setValue(settings.longBreakTime);
-            this.settingsForm.get('numberOfCycles')!.setValue(settings.cyclesBeforeLongBreak);
-            this.settingsForm.get('maxConfirmationTime')!.setValue(settings.maxConfirmationTime);
-            this.settingsForm.get('enableWaiting')!.setValue(settings.enableWaiting);
-            this.enableWaitingTime.set(settings.enableWaiting);
-        })
+        this.settingsService.settings$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(settings => {
+                this.settingsForm.touched;
+                this.settingsForm.get('workTime')!.setValue(settings.workTime);
+                this.settingsForm.get('shortBreakTime')!.setValue(settings.shortBreakTime);
+                this.settingsForm.get('longBreakTime')!.setValue(settings.longBreakTime);
+                this.settingsForm.get('numberOfCycles')!.setValue(settings.cyclesBeforeLongBreak);
+                this.settingsForm.get('maxConfirmationTime')!.setValue(settings.maxConfirmationTime);
+                this.settingsForm.get('enableWaiting')!.setValue(settings.enableWaiting);
+                this.enableWaitingTime.set(settings.enableWaiting);
+            })
     }
 
     onSubmit(): void
@@ -51,6 +56,7 @@ export class Settings implements OnInit {
         }
         this.settingsService
             .updateSettings(settings)
+            .pipe(take(1))
             .subscribe(
                 () => this.router.navigateByUrl('/pomodoro'),
             );

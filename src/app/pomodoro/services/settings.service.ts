@@ -30,14 +30,14 @@ export const POMODORO_SETTINGS_KEY = 'pomodoro.settings';
     providedIn: 'root',
 })
 export class SettingsService {
-    private settingsSubject: BehaviorSubject<Settings>;
-    settings$: Observable<Settings>;
+    private readonly settingsSubject: BehaviorSubject<Settings>;
+    public readonly settings$: Observable<Settings>;
 
     constructor(
-        private localStorageService: LocalStorageService,
-        private userService: UserService,
-        private toastService: ToastService,
-        private http: HttpClient,
+        private readonly localStorageService: LocalStorageService,
+        private readonly userService: UserService,
+        private readonly toastService: ToastService,
+        private readonly http: HttpClient,
     ) {
         this.settingsSubject = new BehaviorSubject<Settings>(
             SettingsService.getDefaultSettings(),

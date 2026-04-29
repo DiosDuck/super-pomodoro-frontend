@@ -4,6 +4,7 @@ import { AuthService } from '../auth.service';
 import { ToastService } from '../../shared/utils/toast.service';
 import { LastRouteService } from '../../shared/utils/last-route.service';
 import { RouterLink } from "@angular/router";
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-sign-in',
@@ -29,6 +30,7 @@ export class SignIn {
       password: this.loginForm.value.password!,
     }
     this.authService.login(loginData)
+      .pipe(take(1))
       .subscribe({
         next: user => {
           this.toastService.addToast("Successful sign in!", "success");

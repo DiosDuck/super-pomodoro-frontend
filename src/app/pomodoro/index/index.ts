@@ -1,6 +1,7 @@
 import {
     Component,
     computed,
+    DestroyRef,
     inject,
     OnDestroy,
     OnInit,
@@ -12,6 +13,7 @@ import { Cycle, CycleService } from '../services/cycle.service';
 import { Settings, SettingsService } from '../services/settings.service';
 import { Timer } from '../services/timer.service';
 import { WorkSessionService } from '../services/work-session.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
     selector: 'app-pomodoro-index',
@@ -19,18 +21,20 @@ import { WorkSessionService } from '../services/work-session.service';
     templateUrl: './index.html',
     styleUrl: './index.scss',
 })
-export class Index implements OnInit, OnDestroy {
-    cycleService = inject(CycleService);
-    settingsService = inject(SettingsService);
-    workSessionService = inject(WorkSessionService);
-    timer = inject(Timer);
-    title = inject(Title);
+export class Index implements OnInit {
+    private readonly cycleService = inject(CycleService);
+    private readonly settingsService = inject(SettingsService);
+    private readonly workSessionService = inject(WorkSessionService);
+    private readonly timer = inject(Timer);
+    private readonly title = inject(Title);
+    private readonly destroyRef = inject(DestroyRef);
 
-    cycle = signal<Cycle>(CycleService.getDefaultCycle());
-    settings = signal<Settings>(SettingsService.getDefaultSettings());
-    numberOfCycles = computed(() => this.cycle().currentNumberOfCycle - 1);
-    cycleState = computed(() => this.cycle().currentCycle);
-    header = computed(() => {
+    private readonly cycle = signal<Cycle>(CycleService.getDefaultCycle());
+    private readonly  settings = signal<Settings>(SettingsService.getDefaultSettings());
+
+    public readonly numberOfCycles = computed(() => this.cycle().currentNumberOfCycle - 1);
+    public readonly cycleState = computed(() => this.cycle().currentCycle);
+    public readonly header = computed(() => {
         if (this.isWaitingForConfirmation()) {
             return 'Continue?';
         }
@@ -47,44 +51,54 @@ export class Index implements OnInit, OnDestroy {
                 return 'Long break';
         }
     });
-    time = signal(0);
-    minutes = computed(() =>
+    public readonly time = signal(0);
+    public readonly minutes = computed(() =>
         Math.floor(this.time() / 60)
             .toString()
             .padStart(2, '0'),
     );
-    seconds = computed(() => (this.time() % 60).toString().padStart(2, '0'));
-    isWaitingForConfirmation = signal(false);
-    timerStarted = signal(false);
-    timerDecrementing = signal(false);
-    alarm: HTMLAudioElement = new Audio('assets/audio/alarm-clock.mp3');
+    public readonly seconds = computed(() => (this.time() % 60).toString().padStart(2, '0'));
+    public readonly isWaitingForConfirmation = signal(false);
+    public readonly timerStarted = signal(false);
+    public readonly timerDecrementing = signal(false);
+    public readonly alarm: HTMLAudioElement = new Audio('assets/audio/alarm-clock.mp3');
 
     ngOnInit(): void {
-        this.cycleService.cycle$.subscribe((cycle) => {
+        this.cycleService.cycle$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((cycle) => {
             this.cycle.set({ ...cycle });
             this.setTimeOnSettingsAndCycleChange();
         });
 
-        this.settingsService.settings$.subscribe((settings) => {
+        this.settingsService.settings$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((settings) => {
             this.settings.set({ ...settings });
             this.setTimeOnSettingsAndCycleChange();
         });
 
-        this.timer.remainingTime$.subscribe((seconds) => {
+        this.timer.remainingTime$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((seconds) => {
             if (!this.isWaitingForConfirmation()) {
                 this.time.set(seconds);
                 this.title.setTitle(this.getTitleName());
             }
         });
 
-        this.timer.remainingConfirmationTime$.subscribe((seconds) => {
+        this.timer.remainingConfirmationTime$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((seconds) => {
             if (this.isWaitingForConfirmation()) {
                 this.time.set(seconds);
                 this.title.setTitle(this.getTitleName());
             }
         });
 
-        this.timer.finishTime$.subscribe((seconds) => {
+        this.timer.finishTime$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe((seconds) => {
             this.isWaitingForConfirmation.set(false);
             this.alarm.pause();
             this.timerStarted.set(false);
@@ -95,20 +109,20 @@ export class Index implements OnInit, OnDestroy {
             this.cycleService.nextCycle(this.settings());
         });
 
-        this.timer.confirmationTimeStarted$.subscribe(() => {
+        this.timer.confirmationTimeStarted$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
             this.alarm.currentTime = 0;
             this.alarm.play();
             this.isWaitingForConfirmation.set(true);
         });
 
-        this.timer.finishConfirmationTime$.subscribe(() => {
+        this.timer.finishConfirmationTime$
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
             this.isWaitingForConfirmation.set(false);
             this.onReset();
         });
-    }
-
-    ngOnDestroy(): void {
-        this.timer.resetTimer();
     }
 
     onStart(): void {

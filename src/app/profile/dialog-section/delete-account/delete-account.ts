@@ -4,7 +4,7 @@ import { UpdateUserService } from "../../profile.service";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { ToastService } from "../../../shared/utils/toast.service";
 import { Router } from "@angular/router";
-import { finalize, take } from "rxjs";
+import { finalize, switchMap, take, tap } from "rxjs";
 import { AuthService } from "../../../auth/auth.service";
 
 @Component({
@@ -33,22 +33,19 @@ export class DeleteAccount {
             )
             .pipe(
                 take(1),
-                finalize(
-                    () => this.isWaiting = false
-                )
-            )
-            .subscribe({
-                next: () => {
+                tap(() => {
                     this.toastService.addToast('User has been deleted.', 'note');
                     this.lastRouterService.updateLastRoute('/');
-                    this.authService.logout()
-                        .subscribe(() => this.router.navigateByUrl('/auth/sign-in'));
-                },
+                }),
+                switchMap(() => this.authService.logout()),
+                finalize(() => this.isWaiting = false),
+            )
+            .subscribe({
+                next: () => this.router.navigateByUrl('/auth/sign-in'),
                 error: () => {
                     this.toastService.addToast('Wrong password, please introduce it again.', 'error', 10);
                 }
-            })
-        ;
+            });
     }
 
     isInvalid(key: string): boolean

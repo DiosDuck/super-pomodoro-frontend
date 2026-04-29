@@ -3,6 +3,7 @@ import { ActivatedRouteSnapshot, CanActivateFn, Router } from "@angular/router";
 import { ToastService } from "../../shared/utils/toast.service";
 import { HttpClient } from "@angular/common/http";
 import { AuthService, TokenVerification } from "../auth.service";
+import { switchMap } from "rxjs";
 
 export const verifyEmailRegisterGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot
@@ -19,13 +20,13 @@ export const verifyEmailRegisterGuard: CanActivateFn = (
     }
 
     authService.logout()
-        .subscribe(
-            () => http.post('/api/auth/register/verify-email', tokenVerification)
-                    .subscribe({
-                        next: () => toastService.addToast('User is now active', 'success'),
-                        error: () => toastService.addToast('There has been an error with activating the user, please try again', 'error', 10),
-                    })
-        )      
- 
+        .pipe(
+            switchMap(() => http.post('/api/auth/register/verify-email', tokenVerification)),
+        )
+        .subscribe({
+            next: () => toastService.addToast('User is now active', 'success'),
+            error: () => toastService.addToast('There has been an error with activating the user, please try again', 'error', 10),
+        });
+
     return router.parseUrl('/auth/sign-in');
 }

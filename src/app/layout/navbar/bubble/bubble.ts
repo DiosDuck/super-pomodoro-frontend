@@ -1,6 +1,7 @@
-import { Component, computed, input, OnInit, output, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { navId } from '../navbar.model';
 import { Observable, timer } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-nav-bubble',
@@ -13,6 +14,7 @@ export class Bubble implements OnInit{
   selectedId = input.required<Observable<navId>>();
   icon = input.required<string>();
 
+  private destroyRef = inject(DestroyRef);
   pastId: navId = null;
   isDisplayed = signal<boolean>(false);
   isActivating = signal<boolean>(false);
@@ -22,8 +24,9 @@ export class Bubble implements OnInit{
   onSelect = output<navId>();
 
   ngOnInit(): void {
-    this.selectedId().subscribe(
-      (id: navId) => {
+    this.selectedId()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((id: navId) => {
         if (this.id() === id) {
           this.isDisplayed.set(true);
           this.isActivating.set(true);

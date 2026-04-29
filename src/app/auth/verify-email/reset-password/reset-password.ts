@@ -4,7 +4,7 @@ import { ResetPasswordService } from "../verify-email.services";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { passwordMatchValidator } from "../../../shared/utils/password-match.validator";
 import { ToastService } from "../../../shared/utils/toast.service";
-import { finalize, take } from "rxjs";
+import { finalize, switchMap, take } from "rxjs";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { AuthService } from "../../auth.service";
 
@@ -30,20 +30,16 @@ export class ResetPassword implements OnInit{
 
     ngOnInit(): void {
         this.authService.logout()
-            .subscribe(
-                () => {
-                    this.route.queryParams
-                    .pipe(
-                        take(1),
-                    )
-                    .subscribe((params) => {
-                        this.resetPasswordService.setParameters(
-                            params['token'],
-                            parseInt(params['id']),
-                        );
-                    });
-                }
-        );
+            .pipe(
+                take(1),
+                switchMap(() => this.route.queryParams.pipe(take(1))),
+            )
+            .subscribe((params) => {
+                this.resetPasswordService.setParameters(
+                    params['token'],
+                    parseInt(params['id']),
+                );
+            });
     }
 
     onSubmit() {

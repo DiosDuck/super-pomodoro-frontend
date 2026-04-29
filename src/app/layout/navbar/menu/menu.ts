@@ -1,9 +1,10 @@
-import { Component, inject, OnInit, output, signal } from '@angular/core';
+import { Component, inject, output } from '@angular/core';
 import { Router, RouterLink } from "@angular/router";
 import { LoggedInPipe } from '../../../shared/pipes/user.pipe';
 import { NAV_MENU_ITEMS } from '../../../shared/configs/nav-items';
 import { navId } from '../navbar.model';
 import { NullableUser, UserService } from '../../../auth/auth.service';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-nav-menu',
@@ -11,21 +12,15 @@ import { NullableUser, UserService } from '../../../auth/auth.service';
   templateUrl: './menu.html',
   styleUrl: './menu.scss',
 })
-export class Menu implements OnInit {
+export class Menu {
   navItems = NAV_MENU_ITEMS;
-  
-  userService = inject(UserService);
-  user = signal<NullableUser>(null);
+
+  private userService = inject(UserService);
+  user = toSignal(this.userService.user$, { initialValue: null as NullableUser });
 
   router = inject(Router);
 
   onSelect = output<navId>();
-
-  ngOnInit(): void {
-    this.userService.user$.subscribe(
-      user => this.user.set(user)
-    );
-  }
 
   toggle() {
     this.onSelect.emit(null);

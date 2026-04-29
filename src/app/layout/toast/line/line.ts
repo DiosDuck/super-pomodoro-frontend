@@ -1,6 +1,7 @@
-import { Component, computed, input, OnInit, output, signal } from "@angular/core";
+import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from "@angular/core";
 import { Toast } from "../../../shared/utils/toast.service";
 import { Subject, takeUntil, timer } from "rxjs";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 @Component({
   selector: 'app-toast-line',
@@ -8,9 +9,10 @@ import { Subject, takeUntil, timer } from "rxjs";
   styleUrl: './line.scss',
 })
 export class Line implements OnInit{
+    private destroyRef = inject(DestroyRef);
     isClosed = signal<boolean>(false);
-    private _finish = new Subject<void>();
-    private _observableFinish = this._finish.asObservable();
+    private finish = new Subject<void>();
+    private observableFinish = this.finish.asObservable();
 
     toast = input.required<Toast>();
     close = output<number>();
@@ -28,22 +30,25 @@ export class Line implements OnInit{
     ngOnInit(): void {
       timer(this.toast().time * 1000)
         .pipe(
-          takeUntil(this._observableFinish)
+          takeUntil(this.observableFinish),
+          takeUntilDestroyed(this.destroyRef),
         )
         .subscribe(() => {
-          this._finish.next();
-        })
-      ;
+          this.finish.next();
+        });
 
-      this._observableFinish.subscribe(() => {
-        this.isClosed.set(true);
-        timer(1000)
-          .subscribe(() => this.close.emit(this.toast().id))
-      })
+      this.observableFinish
+        .pipe(takeUntilDestroyed(this.destroyRef))
+        .subscribe(() => {
+          this.isClosed.set(true);
+          timer(1000)
+            .subscribe(() => this.close.emit(this.toast().id));
+        });
     }
 
     onClose(): void
     {
-      this._finish.next();
+      this.finish.next();
     }
 }
+
