@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import {
     Cycle,
     CycleService,
-    cycleType,
+    CycleType,
     POMODORO_CYCLE_KEY,
 } from './cycle.service';
 import { TestBed } from '@angular/core/testing';
@@ -12,9 +12,9 @@ import { POMODORO_SETTINGS_KEY, Settings } from './settings.service';
 describe('Cycle Service', () => {
     let localStorageService: LocalStorageService;
     interface NextCycleTestCase {
-        initialCycle: cycleType;
+        initialCycle: CycleType;
         initialNumberOfCycles: number;
-        expectedCycle: cycleType;
+        expectedCycle: CycleType;
         expectedNumberOfCycles: number;
     }
 

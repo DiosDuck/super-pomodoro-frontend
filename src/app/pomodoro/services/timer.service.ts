@@ -96,10 +96,10 @@ export class Timer {
     }
 
     private confirmationTimeStarted(): void {
+        this.confirmationTimeStartedSubject.next();
         this.remainingConfirmationTimeSubject.next(
             this.confirmationTime as number,
         );
-        this.confirmationTimeStartedSubject.next();
         interval(1000)
             .pipe(
                 takeUntil(this.stopConfirmationTimeSubject),

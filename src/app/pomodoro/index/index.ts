@@ -3,20 +3,24 @@ import {
     computed,
     DestroyRef,
     inject,
+    InjectionToken,
     OnInit,
     signal,
 } from '@angular/core';
-import { RouterLink } from '@angular/router';
 import { Title } from '@angular/platform-browser';
 import { Cycle, CycleService } from '../services/cycle.service';
 import { Settings, SettingsService } from '../services/settings.service';
 import { Timer } from '../services/timer.service';
 import { WorkSessionService } from '../services/work-session.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
+
+export const ALARM_AUDIO = new InjectionToken<HTMLAudioElement>('alarm-audio', {
+    factory: () => new Audio('assets/audio/alarm-clock.mp3'),
+});
 
 @Component({
     selector: 'app-pomodoro-index',
-    imports: [RouterLink],
     templateUrl: './index.html',
     styleUrl: './index.scss',
 })
@@ -27,9 +31,10 @@ export class Index implements OnInit {
     private readonly timer = inject(Timer);
     private readonly title = inject(Title);
     private readonly destroyRef = inject(DestroyRef);
+    private readonly router = inject(Router);
 
     private readonly cycle = signal<Cycle>(CycleService.getDefaultCycle());
-    private readonly  settings = signal<Settings>(SettingsService.getDefaultSettings());
+    private readonly settings = signal<Settings>(SettingsService.getDefaultSettings());
 
     public readonly numberOfCycles = computed(() => this.cycle().currentNumberOfCycle - 1);
     public readonly cycleState = computed(() => this.cycle().currentCycle);
@@ -60,7 +65,7 @@ export class Index implements OnInit {
     public readonly isWaitingForConfirmation = signal(false);
     public readonly timerStarted = signal(false);
     public readonly timerDecrementing = signal(false);
-    public readonly alarm: HTMLAudioElement = new Audio('assets/audio/alarm-clock.mp3');
+    private readonly alarm = inject(ALARM_AUDIO);
 
     ngOnInit(): void {
         this.cycleService.cycle$
@@ -128,7 +133,6 @@ export class Index implements OnInit {
         if (this.timerStarted()) {
             this.timer.continueTimer();
         } else {
-            this.alarm?.pause();
             this.timer.startTimer();
             this.timerStarted.set(true);
         }
@@ -147,7 +151,7 @@ export class Index implements OnInit {
     }
 
     onIncrement(count: number): void {
-        this.timer.addTime(count);
+        this.timer.addTime(count * 60);
     }
 
     onRewind(): void {
@@ -159,6 +163,10 @@ export class Index implements OnInit {
     onReset(): void {
         this.onRewind();
         this.cycleService.reset();
+    }
+
+    onSettings(): void {
+        this.router.navigateByUrl('/pomodoro/settings');
     }
 
     private getTitleName(): string {

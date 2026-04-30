@@ -50,11 +50,7 @@ export class DeleteAccount {
 
     isInvalid(key: string): boolean
     {
-        const controller = this.deleteAccountForm.get(key);
-        if (!controller) {
-        return true;
-        }
-
+        const controller = this.deleteAccountForm.get(key)!;
         return controller.touched && controller.invalid;
     }
 }

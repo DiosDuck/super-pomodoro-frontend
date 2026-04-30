@@ -33,6 +33,17 @@ describe('Settings Component', () => {
             ]
         });
 
+        settingsSubject.next(
+            {
+                workTime: 25,
+                shortBreakTime: 5,
+                longBreakTime: 15,
+                cyclesBeforeLongBreak: 4,
+                maxConfirmationTime: 1,
+                enableWaiting: true,
+                type: POMODORO_SETTINGS_KEY,
+            }
+        );
         fixure = TestBed.createComponent(SettingsComponent);
         component = fixure.componentInstance;
         nativeElement = fixure.nativeElement;
@@ -91,7 +102,7 @@ describe('Settings Component', () => {
             longBreakTime: 15,
             cyclesBeforeLongBreak: 4,
             maxConfirmationTime: 1,
-            enableWaiting: false,
+            enableWaiting: true,
             type: POMODORO_SETTINGS_KEY,
         };
         fixure.detectChanges();
@@ -109,5 +120,19 @@ describe('Settings Component', () => {
             valueSubmited
         );
         expect(routerMock.navigateByUrl).toBeCalledWith('/pomodoro');
-    })
+    });
+
+    it('enable and disable waiting time', () => {
+        fixure.detectChanges();
+        let enableWaitingTimeCheckBox = nativeElement.querySelector('#enable-waiting') as HTMLInputElement;
+        
+        enableWaitingTimeCheckBox.click();
+        fixure.detectChanges();
+        expect(component.enableWaitingTime()).toBe(false);
+        expect(component.settingsForm.get('maxConfirmationTime')!.value).toBe(0);
+        
+        enableWaitingTimeCheckBox.click();
+        fixure.detectChanges();
+        expect(component.enableWaitingTime()).toBe(true);
+    });
 });

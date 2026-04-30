@@ -67,21 +67,13 @@ export class ChangePassword {
 
   private isConfirmPasswordInvalid(): boolean
   {
-    const controller = this.changePasswordForm.get('confirmPassword');
-    if (!controller) {
-      return true;
-    }
-
+    const controller = this.changePasswordForm.get('confirmPassword')!;
     return controller.touched && (controller.invalid || this.changePasswordForm.hasError('passwordMatch'));
   }
 
   private isSimpleFieldInvalid(key: string): boolean
   {
-    const controller = this.changePasswordForm.get(key);
-    if (!controller) {
-      return true;
-    }
-
+    const controller = this.changePasswordForm.get(key)!;
     return controller.touched && controller.invalid;
   }
 }

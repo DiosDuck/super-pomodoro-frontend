@@ -18,7 +18,7 @@ export class Line implements OnInit {
 
     status = input.required<StatusRequest>();
 
-    response = signal<StatusResponse>({status: 'CRIT', message: 'Http Error',});
+    response = signal<StatusResponse>({ status: 'HOLD', message: 'Waiting...' });
 
     responseStatus = computed<'waiting' | 'success' | 'warning' | 'error'>(
         () => {
@@ -46,7 +46,7 @@ export class Line implements OnInit {
             catchError(err => 
                 of('status' in err.error 
                     ? (err.error as StatusResponse)
-                    : ({status: 'CRIT', message: 'Http Error',} as StatusResponse)
+                    : ({ status: 'CRIT', message: 'Http Error' } as StatusResponse)
                 )
             ),
         )

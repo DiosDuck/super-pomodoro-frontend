@@ -11,11 +11,11 @@ import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
     imports: [ReactiveFormsModule]
 })
 export class Settings implements OnInit {
-    settingsService = inject(SettingsService);
-    router = inject(Router);
-    private destroyRef = inject(DestroyRef);
+    private readonly settingsService = inject(SettingsService);
+    private readonly router = inject(Router);
+    private readonly destroyRef = inject(DestroyRef);
 
-    settingsForm = new FormGroup({
+    public readonly settingsForm = new FormGroup({
         workTime: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
         shortBreakTime: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
         longBreakTime: new FormControl(0, [Validators.required, Validators.pattern("^[0-9]+(.[0-9]+)?$"), Validators.min(0)]),
@@ -24,7 +24,7 @@ export class Settings implements OnInit {
         enableWaiting: new FormControl(true),
     });
 
-    enableWaitingTime = signal<boolean>(false);
+    public readonly enableWaitingTime = signal<boolean>(false);
 
     ngOnInit(): void 
     {

@@ -82,7 +82,7 @@
             "buildTarget": "::development",
             "providersFile": "src/test-providers.ts",
             "codeCoverage": true,
-            "codeCoverageReporters": ["html", "json", "json-summary", "text-summary"]
+            "codeCoverageReporters": ["html", "json", "json-summary", "text-summary", "text"]
           }
         }
       }

@@ -1,66 +1,66 @@
 <div class="pomodoro">
-    <h1 class="pomodoro-title">{{ header() }}</h1>
+    <h1 id="pomodoro-title" class="pomodoro-title">{{ header() }}</h1>
     <div class="pomodoro-display">
-        <div class="pomodoro-display__timer">{{ minutes() }}:{{ seconds() }}</div>
-        <div class="pomodoro-display__cycles">Number of cycles done: {{ this.numberOfCycles() }}</div>
+        <div id="pomodoro-timer" class="pomodoro-display__timer">{{ minutes() }}:{{ seconds() }}</div>
+        <div id="pomodoro-number-cycles" class="pomodoro-display__cycles">Number of cycles done: {{ this.numberOfCycles() }}</div>
     </div>
     <div class="pomodoro-buttons">
         @if (isWaitingForConfirmation()) {
-           <button class="pomodoro-button" (click)="onNext()">
+           <button id="pomodoro-button-next" class="pomodoro-button" (click)="onNext()">
                 <svg class="pomodoro-button__icon">
                     <use xlink:href="assets/icons/sprite.svg#icon-next"></use>
                 </svg>
             </button>
-            <button class="pomodoro-button" [disabled]="true">
+            <button id="pomodoro-button-increase-by-5" class="pomodoro-button" [disabled]="true">
                 <span class="pomodoro-button__text">+5</span>
             </button>
-            <button class="pomodoro-button" [disabled]="true">
+            <button id="pomodoro-button-increase-by-15" class="pomodoro-button" [disabled]="true">
                 <span class="pomodoro-button__text">+15</span>
             </button>
         }
         @else if (!timerDecrementing()) {
-            <button class="pomodoro-button" (click)="onStart()">
+            <button id="pomodoro-button-start" class="pomodoro-button" (click)="onStart()">
                 <svg class="pomodoro-button__icon">
                     <use xlink:href="assets/icons/sprite.svg#icon-play"></use>
                 </svg>
             </button>
-            <button class="pomodoro-button" (click)="onRewind()">
+            <button id="pomodoro-button-rewind" class="pomodoro-button" (click)="onRewind()">
                 <svg class="pomodoro-button__icon">
                     <use xlink:href="assets/icons/sprite.svg#icon-rewind"></use>
                 </svg>
             </button>
-            <button class="pomodoro-button" (click)="onReset()">
+            <button id="pomodoro-button-reset" class="pomodoro-button" (click)="onReset()">
                 <svg class="pomodoro-button__icon">
                     <use xlink:href="assets/icons/sprite.svg#icon-reset"></use>
                 </svg>
             </button>
         }
         @else {
-            <button class="pomodoro-button" (click)="onStop()">
+            <button id="pomodoro-button-pause" class="pomodoro-button" (click)="onStop()">
                 <svg class="pomodoro-button__icon">
                     <use xlink:href="assets/icons/sprite.svg#icon-pause"></use>
                 </svg>
             </button>
             @if (cycleState() === 'work') {
-                <button class="pomodoro-button" (click)="onIncrement(5)">
+                <button id="pomodoro-button-increase-by-5" class="pomodoro-button" (click)="onIncrement(5)">
                     <span class="pomodoro-button__text">+5</span>
                 </button>
-                <button class="pomodoro-button" (click)="onIncrement(15)">
+                <button id="pomodoro-button-increase-by-15" class="pomodoro-button" (click)="onIncrement(15)">
                     <span class="pomodoro-button__text">+15</span>
                 </button>
             }
             @else {
-                <button class="pomodoro-button" (click)="onNext()">
+                <button id="pomodoro-button-next" class="pomodoro-button" (click)="onNext()">
                     <svg class="pomodoro-button__icon">
                         <use xlink:href="assets/icons/sprite.svg#icon-next"></use>
                     </svg>
                 </button>
-                <button class="pomodoro-button" [disabled]="true">
+                <button id="pomodoro-button-increase-by-5" class="pomodoro-button" [disabled]="true">
                     <span class="pomodoro-button__text">+5</span>
                 </button>
             }
         }
-        <button class="pomodoro-button" routerLink="/pomodoro/settings" [disabled]="timerStarted()">
+        <button id="pomodoro-button-settings" class="pomodoro-button" (click)="onSettings()" [disabled]="timerStarted()">
             <svg class="pomodoro-button__icon">
                 <use xlink:href="assets/icons/sprite.svg#icon-settings"></use>
             </svg>

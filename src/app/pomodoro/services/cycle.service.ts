@@ -3,10 +3,10 @@ import { BehaviorSubject } from 'rxjs';
 import { LocalStorageService } from '../../shared/utils/local-storage.service';
 import { Settings } from './settings.service';
 
-export type cycleType = 'idle' | 'work' | 'short-break' | 'long-break';
+export type CycleType = 'idle' | 'work' | 'short-break' | 'long-break';
 
 export interface Cycle {
-    currentCycle: cycleType;
+    currentCycle: CycleType;
     currentNumberOfCycle: number;
     dateTime: Date;
     type: 'pomodoro.cycle';

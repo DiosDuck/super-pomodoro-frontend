@@ -27,6 +27,7 @@ describe('Status Line Component', () => {
 
     it('Line Component Success', () => {
         fixure.componentRef.setInput('status', { name: 'Test Request Success', url: '/api/test/1', type: 'health'});
+        expect(fixure.componentInstance.responseStatus()).toBe('waiting');
         fixure.detectChanges();
 
         const req = httpMock.expectOne('/api/test/1');
@@ -90,7 +91,6 @@ describe('Status Line Component', () => {
     });
 
     it('Line Component Value', () => {
-
         fixure.componentRef.setInput('status', { name: 'Test Request Value', url: '/api/test/5', type: 'value'});
         fixure.detectChanges();
 
