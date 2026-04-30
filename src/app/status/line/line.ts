@@ -1,54 +1,57 @@
-import { Component, computed, inject, input } from '@angular/core';
-import { StatusService, StatusRequest, StatusResponse } from '../status.service';
+import { Component, computed, inject, input, OnInit, signal } from '@angular/core';
+import {
+    StatusService,
+    StatusRequest,
+    StatusResponse,
+} from '../status.service';
 import { CommonModule } from '@angular/common';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
-import { switchMap, map, filter, catchError, of } from 'rxjs';
+import { catchError, of, take } from 'rxjs';
 
 @Component({
-  selector: 'app-status-line',
-  imports: [CommonModule],
-  templateUrl: './line.html',
-  styleUrl: './line.scss',
+    selector: 'app-status-line',
+    imports: [CommonModule],
+    templateUrl: './line.html',
+    styleUrl: './line.scss',
 })
-export class Line {
-  private statusService = inject(StatusService);
+export class Line implements OnInit {
+    private statusService = inject(StatusService);
 
-  status = input.required<StatusRequest>();
+    status = input.required<StatusRequest>();
 
-  response = toSignal(
-    toObservable(this.status).pipe(
-      map(s => s.url),
-      filter(url => !!url),
-      switchMap(url =>
-        this.statusService.getResponse(url).pipe(
-          catchError(err => of(
-            'status' in err.error
-              ? err.error as StatusResponse
-              : { status: 'CRIT', message: 'Http Error' } as StatusResponse
-          ))
+    response = signal<StatusResponse>({status: 'CRIT', message: 'Http Error',});
+
+    responseStatus = computed<'waiting' | 'success' | 'warning' | 'error'>(
+        () => {
+            switch (this.response().status) {
+                case 'HOLD': {
+                    return 'waiting';
+                }
+                case 'OK': {
+                    return 'success';
+                }
+                case 'WARN': {
+                    return 'warning';
+                }
+                case 'CRIT': {
+                    return 'error';
+                }
+            }
+        },
+    );
+
+    ngOnInit(): void {
+        this.statusService.getResponse(this.status().url)
+        .pipe(
+            take(1),
+            catchError(err => 
+                of('status' in err.error 
+                    ? (err.error as StatusResponse)
+                    : ({status: 'CRIT', message: 'Http Error',} as StatusResponse)
+                )
+            ),
         )
-      ),
-    ),
-    { initialValue: { status: 'HOLD', message: 'Waiting...' } as StatusResponse },
-  );
-
-  responseStatus = computed<'waiting'|'success'|'warning'|'error'>(
-    () => {
-      switch(this.response().status) {
-        case 'HOLD': {
-          return 'waiting';
-        }
-        case 'OK': {
-            return 'success';
-        }
-        case 'WARN': {
-          return 'warning';
-        }
-        case 'CRIT': {
-          return 'error';
-        }
-      }
+        .subscribe(
+            statusResponse => this.response.set(statusResponse)
+        )
     }
-  );
 }
-
