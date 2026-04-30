@@ -81,7 +81,8 @@
             "runner": "vitest",
             "buildTarget": "::development",
             "providersFile": "src/test-providers.ts",
-            "codeCoverage": true
+            "codeCoverage": true,
+            "codeCoverageReporters": ["html", "json", "json-summary", "text-summary"]
           }
         }
       }
