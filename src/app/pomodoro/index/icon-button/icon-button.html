@@ -1,0 +1,9 @@
+<button
+    [id]="buttonId()"
+    class="pomodoro-button"
+    [disabled]="disabled()"
+    (click)="clicked.emit()">
+    <svg class="pomodoro-button__icon">
+        <use [attr.xlink:href]="'assets/icons/sprite.svg#icon-' + icon()"></use>
+    </svg>
+</button>

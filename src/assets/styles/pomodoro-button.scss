@@ -1,0 +1,18 @@
+.pomodoro-button {
+    padding: 2.25rem;
+    border: 0;
+    background-color: var(--gray-color-2);
+
+    &:not(:disabled) {
+        cursor: pointer;
+
+        &:hover, &:focus {
+            background-color: var(--gray-color-3);
+            outline: none;
+        }
+    }
+
+    &:disabled {
+        background-color: var(--gray-color-4);
+    }
+}

@@ -1,43 +1,63 @@
-import {
-    Component,
-    computed,
-    DestroyRef,
-    inject,
-    InjectionToken,
-    OnInit,
-    signal,
-} from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
 import { Cycle, CycleService } from '../services/cycle.service';
 import { Settings, SettingsService } from '../services/settings.service';
 import { Timer } from '../services/timer.service';
 import { WorkSessionService } from '../services/work-session.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router } from '@angular/router';
-
-export const ALARM_AUDIO = new InjectionToken<HTMLAudioElement>('alarm-audio', {
-    factory: () => new Audio('assets/audio/alarm-clock.mp3'),
-});
+import { ALARM_AUDIO } from '../alarm-audio.token';
+import { IconButton } from './icon-button/icon-button';
 
 @Component({
     selector: 'app-pomodoro-index',
     templateUrl: './index.html',
     styleUrl: './index.scss',
+    imports: [IconButton],
 })
-export class Index implements OnInit {
+export class Index {
     private readonly cycleService = inject(CycleService);
     private readonly settingsService = inject(SettingsService);
     private readonly workSessionService = inject(WorkSessionService);
     private readonly timer = inject(Timer);
     private readonly title = inject(Title);
-    private readonly destroyRef = inject(DestroyRef);
     private readonly router = inject(Router);
+    private readonly alarm = inject(ALARM_AUDIO);
 
-    private readonly cycle = signal<Cycle>(CycleService.getDefaultCycle());
-    private readonly settings = signal<Settings>(SettingsService.getDefaultSettings());
+    private readonly cycle = toSignal(this.cycleService.cycle$, {
+        initialValue: CycleService.getDefaultCycle(),
+    });
+    private readonly settings = toSignal(this.settingsService.settings$, {
+        initialValue: SettingsService.getDefaultSettings(),
+    });
+    private readonly remainingTime = toSignal(this.timer.remainingTime$, {
+        initialValue: 0,
+    });
+    private readonly remainingConfirmationTime = toSignal(
+        this.timer.remainingConfirmationTime$,
+        { initialValue: 0 },
+    );
 
     public readonly numberOfCycles = computed(() => this.cycle().currentNumberOfCycle - 1);
     public readonly cycleState = computed(() => this.cycle().currentCycle);
+    public readonly isWaitingForConfirmation = signal(false);
+    public readonly timerStarted = signal(false);
+    public readonly timerDecrementing = signal(false);
+
+    public readonly time = computed(() =>
+        this.isWaitingForConfirmation()
+            ? this.remainingConfirmationTime()
+            : this.remainingTime(),
+    );
+    public readonly minutes = computed(() =>
+        Math.floor(this.time() / 60)
+            .toString()
+            .padStart(2, '0'),
+    );
+    public readonly seconds = computed(() =>
+        (this.time() % 60).toString().padStart(2, '0'),
+    );
     public readonly header = computed(() => {
         if (this.isWaitingForConfirmation()) {
             return 'Continue?';
@@ -55,78 +75,43 @@ export class Index implements OnInit {
                 return 'Long break';
         }
     });
-    public readonly time = signal(0);
-    public readonly minutes = computed(() =>
-        Math.floor(this.time() / 60)
-            .toString()
-            .padStart(2, '0'),
-    );
-    public readonly seconds = computed(() => (this.time() % 60).toString().padStart(2, '0'));
-    public readonly isWaitingForConfirmation = signal(false);
-    public readonly timerStarted = signal(false);
-    public readonly timerDecrementing = signal(false);
-    private readonly alarm = inject(ALARM_AUDIO);
 
-    ngOnInit(): void {
-        this.cycleService.cycle$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((cycle) => {
-            this.cycle.set({ ...cycle });
-            this.setTimeOnSettingsAndCycleChange();
+    constructor() {
+        effect(() => {
+            this.setTimeOnSettingsAndCycleChange(this.settings(), this.cycle());
         });
 
-        this.settingsService.settings$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((settings) => {
-            this.settings.set({ ...settings });
-            this.setTimeOnSettingsAndCycleChange();
-        });
-
-        this.timer.remainingTime$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((seconds) => {
-            if (!this.isWaitingForConfirmation()) {
-                this.time.set(seconds);
-                this.title.setTitle(this.getTitleName());
-            }
-        });
-
-        this.timer.remainingConfirmationTime$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((seconds) => {
-            if (this.isWaitingForConfirmation()) {
-                this.time.set(seconds);
-                this.title.setTitle(this.getTitleName());
-            }
+        effect(() => {
+            this.title.setTitle(this.getTitleName());
         });
 
         this.timer.finishTime$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe((seconds) => {
-            this.isWaitingForConfirmation.set(false);
-            this.alarm.pause();
-            this.timerStarted.set(false);
-            this.timerDecrementing.set(false);
-            if (this.cycleState() === 'work') {
-                this.workSessionService.saveNewWorkSession(seconds);
-            }
-            this.cycleService.nextCycle(this.settings());
-        });
+            .pipe(takeUntilDestroyed())
+            .subscribe((seconds) => {
+                this.isWaitingForConfirmation.set(false);
+                this.alarm.pause();
+                this.timerStarted.set(false);
+                this.timerDecrementing.set(false);
+                if (this.cycleState() === 'work') {
+                    this.workSessionService.saveNewWorkSession(seconds);
+                }
+                this.cycleService.nextCycle(this.settings());
+            });
 
         this.timer.confirmationTimeStarted$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-            this.alarm.currentTime = 0;
-            this.alarm.play();
-            this.isWaitingForConfirmation.set(true);
-        });
+            .pipe(takeUntilDestroyed())
+            .subscribe(() => {
+                this.alarm.currentTime = 0;
+                this.alarm.play();
+                this.isWaitingForConfirmation.set(true);
+            });
 
         this.timer.finishConfirmationTime$
-        .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(() => {
-            this.isWaitingForConfirmation.set(false);
-            this.onReset();
-        });
+            .pipe(takeUntilDestroyed())
+            .subscribe(() => {
+                this.isWaitingForConfirmation.set(false);
+                this.onReset();
+            });
     }
 
     onStart(): void {
@@ -190,10 +175,7 @@ export class Index implements OnInit {
         return `${start} ${this.minutes()}:${this.seconds()}`;
     }
 
-    private setTimeOnSettingsAndCycleChange(): void {
-        let settings = this.settings();
-        let cycle = this.cycle();
-
+    private setTimeOnSettingsAndCycleChange(settings: Settings, cycle: Cycle): void {
         this.timer.setConfirmationTime(
             settings.enableWaiting ? settings.maxConfirmationTime * 60 : false,
         );

@@ -33,7 +33,7 @@ export class CycleService {
     }
 
     nextCycle(settings: Settings): void {
-        let cycle = this.cycleSubject.value;
+        let cycle = { ...this.cycleSubject.value };
         if (cycle.currentCycle !== 'work' && cycle.currentCycle !== 'idle') {
             cycle.currentCycle = 'work';
         } else {
@@ -52,7 +52,7 @@ export class CycleService {
     }
 
     start(): void {
-        let cycle = this.cycleSubject.value;
+        let cycle = { ...this.cycleSubject.value };
         if (cycle.currentCycle === 'idle') {
             cycle.currentCycle = 'work';
             this.cycleSubject.next(cycle);

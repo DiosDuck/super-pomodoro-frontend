@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { ALARM_AUDIO, Index as PomodoroIndex } from ".";
+import { Index as PomodoroIndex } from ".";
+import { ALARM_AUDIO } from "../alarm-audio.token";
 import { BehaviorSubject, Observable } from "rxjs";
 import { Cycle, CycleService, CycleType } from "../services/cycle.service";
 import { SettingsService, Settings } from "../services/settings.service";
