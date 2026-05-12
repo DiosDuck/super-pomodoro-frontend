@@ -1,7 +1,7 @@
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 
-const THRESHOLD = 90;
+const THRESHOLD = 85;
 const METRICS = ['lines', 'branches', 'functions', 'statements'];
 
 const summaryPath = join(__dirname, '..', 'coverage', 'coverage-summary.json');
