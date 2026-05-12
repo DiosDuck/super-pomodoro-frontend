@@ -1,6 +1,6 @@
 <div class="button-list">
-    <button class="button-list__item" (click)="activateDialog('change-password')">Edit password</button>
-    <button class="button-list__item button-list__item--danger" (click)="activateDialog('delete-account')">Delete account</button>
+    <app-form-button buttonId="button-edit-password" (onClick)="activateDialog('change-password')">Edit password</app-form-button>
+    <app-form-button buttonId="button-delete-account" (onClick)="activateDialog('delete-account')" buttonStyle="danger">Delete account</app-form-button>
 </div>
 <dialog class="button-dialog" [open]="isActie()">
     <div class="button-dialog__content">

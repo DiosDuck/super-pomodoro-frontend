@@ -5,6 +5,7 @@ import {
     Observable,
     of,
     switchMap,
+    tap,
 } from 'rxjs';
 import { LocalStorageService } from '../../shared/utils/local-storage.service';
 import { UserService } from '../../auth/auth.service';
@@ -133,7 +134,6 @@ export class SettingsService {
     private updateUserSettings(settings: Settings): Observable<Settings> {
         let settingsHttp = this.castToHttpSettings(settings);
         return this.http.post('/api/pomodoro/settings', settingsHttp).pipe(
-            switchMap(() => this.updateLocalStorageSettings(settings)),
             catchError((error) => {
                 this.toastService.addToast(
                     'Error on saving the settings, please try again later on!',
@@ -142,6 +142,8 @@ export class SettingsService {
                 );
                 throw error;
             }),
+            tap(() => this.toastService.addToast('Settings updated', 'success')),
+            switchMap(() => this.updateLocalStorageSettings(settings)),
         );
     }
 

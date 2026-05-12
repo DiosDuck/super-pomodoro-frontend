@@ -3,12 +3,13 @@ import { DialogForm } from "../profile.service";
 import { ChangePassword } from "../dialog-section/change-password/change-password";
 import { DeleteAccount } from "../dialog-section/delete-account/delete-account";
 import { SvgIcon } from "../../shared/components/svg-icon/svg-icon";
+import { FormButton } from "../../shared/components/form/form-button/form-button";
 
 @Component({
     selector: 'app-profile-button-list',
     templateUrl: 'button-list.html',
     styleUrl: 'button-list.scss',
-    imports: [ChangePassword, DeleteAccount, SvgIcon],
+    imports: [ChangePassword, DeleteAccount, SvgIcon, FormButton],
 })
 export class ButtonList {
     isActie = signal(false);

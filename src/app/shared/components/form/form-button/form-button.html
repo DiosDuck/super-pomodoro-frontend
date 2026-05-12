@@ -1,0 +1,9 @@
+<button 
+    [type]="type()" 
+    [disabled]="disabled()" 
+    [id]="buttonId()" 
+    [class]="buttonStyle()"
+    (click)="clicked()"
+>
+    <ng-content/>
+</button>

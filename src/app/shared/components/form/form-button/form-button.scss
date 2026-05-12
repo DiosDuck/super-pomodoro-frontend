@@ -1,0 +1,46 @@
+button {
+    font-size: 3.5rem;
+    border-radius: 1.25rem;
+    padding: 0.75rem 1.5rem;
+    border: 0;
+    font-family: var(--font-family);
+    color: var(--white-color-1);
+
+    &:not(:disabled) {
+        cursor: pointer;
+    }
+}
+
+.primary {
+    background-color: var(--blue-color-1);
+
+    &:not(:disabled) {
+        &:hover, &:focus {
+            background-color: var(--blue-color-2);
+        }
+    }
+
+    &:disabled {
+        background-color: var(--blue-color-3);
+    }
+}
+
+.secondary {
+    background-color: var(--gray-color-1);
+
+    &:hover, &:focus {
+        background-color: var(--gray-color-2);
+    }
+}
+
+.danger {
+    background-color: var(--red-color-1);
+
+    &:hover, &:focus {
+        background-color: var(--red-color-2);
+    }
+
+    &:disabled {
+        background-color: var(--red-color-3);
+    }
+}

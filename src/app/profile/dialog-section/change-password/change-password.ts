@@ -7,12 +7,14 @@ import { finalize, switchMap, take, tap } from "rxjs";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { Router } from "@angular/router";
 import { AuthService } from "../../../auth/auth.service";
+import { FormButton } from "../../../shared/components/form/form-button/form-button";
+import { FormInput } from "../../../shared/components/form/form-input/form-input";
 
 @Component({
     selector: 'app-profile-change-password',
     templateUrl: 'change-password.html',
     styleUrls: ['change-password.scss'],
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, FormButton, FormInput],
 })
 export class ChangePassword {
   authService = inject(AuthService);

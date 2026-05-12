@@ -44,13 +44,13 @@ describe('Delete Account Component', () => {
         passwordController.markAsTouched();
         component.deleteAccountForm.updateValueAndValidity();
         fixure.detectChanges();
-        expect(passwordInput.classList.contains('form-page-form__block--invalid')).toBe(true);
+        expect(passwordInput.classList.contains('invalid')).toBe(true);
 
         passwordController.setValue('right_password');
         passwordController.markAsTouched();
         component.deleteAccountForm.updateValueAndValidity();
         fixure.detectChanges();
-        expect(passwordInput.classList.contains('form-page-form__block--invalid')).toBe(false);
+        expect(passwordInput.classList.contains('invalid')).toBe(false);
     });
 
     it('Invalid password', () => {

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { beforeEach, describe, expect, it } from "vitest";
 import { ButtonList } from "./button-list";
 import { Component } from "@angular/core";
+import { FormButton } from "../../shared/components/form/form-button/form-button";
 
 @Component({
     selector: "app-profile-change-password",
@@ -28,7 +29,7 @@ describe('Profile Button List Component', () => {
         await TestBed.configureTestingModule({
             imports: [ButtonList],
         }).overrideComponent(
-            ButtonList, {set: {imports: [ProfileChangePasswordStub, ProfileDeleteAccountStub]}}
+            ButtonList, {set: {imports: [ProfileChangePasswordStub, ProfileDeleteAccountStub, FormButton]}}
         ).compileComponents();
 
         fixure = TestBed.createComponent(ButtonList);

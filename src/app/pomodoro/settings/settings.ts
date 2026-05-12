@@ -4,11 +4,12 @@ import { SettingsService, Settings as SettingsModel, POMODORO_SETTINGS_KEY } fro
 import { Router } from "@angular/router";
 import { take } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { FormButton } from "../../shared/components/form/form-button/form-button";
 
 @Component({
     templateUrl: "settings.html",
     styleUrl: "settings.scss",
-    imports: [ReactiveFormsModule]
+    imports: [ReactiveFormsModule, FormButton]
 })
 export class Settings implements OnInit {
     private readonly settingsService = inject(SettingsService);

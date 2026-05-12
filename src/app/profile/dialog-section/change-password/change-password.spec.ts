@@ -47,9 +47,9 @@ describe('Change Password Component', () => {
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
         fixure.detectChanges();
-        expect(nativeElement.querySelector('#oldPassword')?.classList.contains('form-page-form__block--invalid')).toBe(true);
-        expect(nativeElement.querySelector('#newPassword')?.classList.contains('form-page-form__block--invalid')).toBe(false);
-        expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('form-page-form__block--invalid')).toBe(false);
+        expect(nativeElement.querySelector('#oldPassword')?.classList.contains('invalid')).toBe(true);
+        expect(nativeElement.querySelector('#newPassword')?.classList.contains('invalid')).toBe(false);
+        expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('invalid')).toBe(false);
     
         oldPassword?.setValue('old_password');
         newPassowrd?.setValue('different_password');
@@ -57,9 +57,9 @@ describe('Change Password Component', () => {
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
         fixure.detectChanges();
-        expect(nativeElement.querySelector('#oldPassword')?.classList.contains('form-page-form__block--invalid')).toBe(false);
-        expect(nativeElement.querySelector('#newPassword')?.classList.contains('form-page-form__block--invalid')).toBe(false);
-        expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('form-page-form__block--invalid')).toBe(true);
+        expect(nativeElement.querySelector('#oldPassword')?.classList.contains('invalid')).toBe(false);
+        expect(nativeElement.querySelector('#newPassword')?.classList.contains('invalid')).toBe(false);
+        expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('invalid')).toBe(true);
 
         oldPassword?.setValue('old_password');
         newPassowrd?.setValue('new_password');
@@ -67,9 +67,9 @@ describe('Change Password Component', () => {
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
         fixure.detectChanges();
-        expect(nativeElement.querySelector('#oldPassword')?.classList.contains('form-page-form__block--invalid')).toBe(false);
-        expect(nativeElement.querySelector('#newPassword')?.classList.contains('form-page-form__block--invalid')).toBe(false);
-        expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('form-page-form__block--invalid')).toBe(false);
+        expect(nativeElement.querySelector('#oldPassword')?.classList.contains('invalid')).toBe(false);
+        expect(nativeElement.querySelector('#newPassword')?.classList.contains('invalid')).toBe(false);
+        expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('invalid')).toBe(false);
     });
 
     it('Invalid input', () => {

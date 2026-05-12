@@ -90,7 +90,7 @@ describe('Settings Component', () => {
     it('go back', () => {
         fixure.detectChanges();
 
-        let goBackButton = nativeElement.querySelector<HTMLButtonElement>('.settings-form__button--secondary')!;
+        let goBackButton = nativeElement.querySelector<HTMLButtonElement>('#form-button-back')!;
         goBackButton.click();
         expect(routerMock.navigateByUrl).toBeCalledWith('/pomodoro');
     });
@@ -113,7 +113,7 @@ describe('Settings Component', () => {
         component.settingsForm.updateValueAndValidity();
         expect(component.settingsForm.valid).toBe(true);
 
-        let submitButton = nativeElement.querySelector<HTMLButtonElement>('.settings-form__button--primary')!;
+        let submitButton = nativeElement.querySelector<HTMLButtonElement>('#form-button-submit')!;
         settingsServiceMock.updateSettings.mockReturnValue(of(valueSubmited));
         submitButton.click();
         expect(settingsServiceMock.updateSettings).toBeCalledWith(

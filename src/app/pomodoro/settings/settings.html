@@ -31,8 +31,8 @@
             <div class="settings-form__block settings-form__block--empty"></div>
         }
         <div class="settings-form__buttons">
-            <button type="button" class="settings-form__button settings-form__button--secondary" (click)="onBack()">Go back</button>
-            <button type="submit" class="settings-form__button settings-form__button--primary" [disabled]="!settingsForm.valid">Save</button>
+            <app-form-button buttonId="form-button-back" (onClick)="onBack()">Go back</app-form-button>
+            <app-form-button buttonId="form-button-submit" type="submit" buttonStyle="primary" [disabled]="!settingsForm.valid">Save</app-form-button>
         </div>
     </form>
 </div>

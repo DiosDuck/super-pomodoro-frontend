@@ -6,12 +6,14 @@ import { ToastService } from "../../../shared/utils/toast.service";
 import { Router } from "@angular/router";
 import { finalize, switchMap, take, tap } from "rxjs";
 import { AuthService } from "../../../auth/auth.service";
+import { FormButton } from "../../../shared/components/form/form-button/form-button";
+import { FormInput } from "../../../shared/components/form/form-input/form-input";
 
 @Component({
     selector: 'app-profile-delete-account',
     templateUrl: 'delete-account.html',
     styleUrls: ['delete-account.scss'],
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, FormButton, FormInput],
 })
 export class DeleteAccount {
     authService = inject(AuthService);
