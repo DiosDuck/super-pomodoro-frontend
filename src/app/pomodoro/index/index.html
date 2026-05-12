@@ -6,7 +6,9 @@
     </div>
     <div class="pomodoro-buttons">
         @if (isWaitingForConfirmation()) {
-            <app-pomodoro-icon-button buttonId="pomodoro-button-next" icon="next" (clicked)="onNext()" />
+            <button id="pomodoro-button-next" class="pomodoro-button"(click)="onNext()">
+                <svg appSVG class="pomodoro-button__icon" icon="next"></svg>
+            </button>
             <button id="pomodoro-button-increase-by-5" class="pomodoro-button" [disabled]="true">
                 <span class="pomodoro-button__text">+5</span>
             </button>
@@ -15,12 +17,20 @@
             </button>
         }
         @else if (!timerDecrementing()) {
-            <app-pomodoro-icon-button buttonId="pomodoro-button-start" icon="play" (clicked)="onStart()" />
-            <app-pomodoro-icon-button buttonId="pomodoro-button-rewind" icon="rewind" (clicked)="onRewind()" />
-            <app-pomodoro-icon-button buttonId="pomodoro-button-reset" icon="reset" (clicked)="onReset()" />
+            <button id="pomodoro-button-start" class="pomodoro-button" (click)="onStart()">
+                <svg appSVG class="pomodoro-button__icon" icon="play"></svg>
+            </button>
+            <button id="pomodoro-button-rewind" class="pomodoro-button" (click)="onRewind()">
+                <svg appSVG class="pomodoro-button__icon" icon="rewind"></svg>
+            </button>
+            <button id="pomodoro-button-reset" class="pomodoro-button" (click)="onReset()">
+                <svg appSVG class="pomodoro-button__icon" icon="reset"></svg>
+            </button>
         }
         @else {
-            <app-pomodoro-icon-button buttonId="pomodoro-button-pause" icon="pause" (clicked)="onStop()" />
+            <button id="pomodoro-button-pause" class="pomodoro-button" (click)="onStop()">
+                <svg appSVG id="pomodoro-button-pause" class="pomodoro-button__icon" icon="pause"></svg>
+            </button>
             @if (cycleState() === 'work') {
                 <button id="pomodoro-button-increase-by-5" class="pomodoro-button" (click)="onIncrement(5)">
                     <span class="pomodoro-button__text">+5</span>
@@ -29,13 +39,17 @@
                     <span class="pomodoro-button__text">+15</span>
                 </button>
             }
-            @else {
-                <app-pomodoro-icon-button buttonId="pomodoro-button-next" icon="next" (clicked)="onNext()" />
+            @else {    
+                <button id="pomodoro-button-next" class="pomodoro-button"  (click)="onNext()">
+                    <svg appSVG class="pomodoro-button__icon" icon="next"></svg>
+                </button>
                 <button id="pomodoro-button-increase-by-5" class="pomodoro-button" [disabled]="true">
                     <span class="pomodoro-button__text">+5</span>
                 </button>
             }
         }
-        <app-pomodoro-icon-button buttonId="pomodoro-button-settings" icon="settings" [disabled]="timerStarted()" (clicked)="onSettings()" />
+        <button id="pomodoro-button-settings" class="pomodoro-button" [disabled]="timerStarted()" (click)="onSettings()">
+            <svg appSVG class="pomodoro-button__icon" icon="settings"></svg>
+        </button>
     </div>
 </div>

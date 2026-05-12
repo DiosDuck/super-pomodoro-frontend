@@ -2,11 +2,13 @@ import { Component, computed, DestroyRef, inject, input, OnInit, output, signal 
 import { Toast } from "../../../shared/utils/toast.service";
 import { Subject, takeUntil, timer } from "rxjs";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { SvgIcon } from "../../../shared/components/svg-icon/svg-icon";
 
 @Component({
   selector: 'app-toast-line',
   templateUrl: './line.html',
   styleUrl: './line.scss',
+  imports: [SvgIcon],
 })
 export class Line implements OnInit{
     private destroyRef = inject(DestroyRef);

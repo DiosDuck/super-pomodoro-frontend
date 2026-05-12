@@ -2,10 +2,11 @@ import { Component, computed, DestroyRef, inject, input, OnInit, output, signal 
 import { navId } from '../navbar.model';
 import { Observable, timer } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SvgIcon } from "../../../shared/components/svg-icon/svg-icon";
 
 @Component({
   selector: 'app-nav-bubble',
-  imports: [],
+  imports: [SvgIcon],
   templateUrl: './bubble.html',
   styleUrl: './bubble.scss',
 })

@@ -5,9 +5,7 @@
 <dialog class="button-dialog" [open]="isActie()">
     <div class="button-dialog__content">
         <div class="button-dialog__content--header">
-            <svg class="button-dialog__close" (click)="closeDialog()">
-                <use xlink:href="assets/icons/sprite.svg#icon-close"></use>
-            </svg>
+            <svg appSVG class="button-dialog__close" (click)="closeDialog()" icon="close"></svg>
         </div>
         <div class="button-dialog__content--row">
             @switch (windowSelected()) {

@@ -223,7 +223,7 @@ describe('Pomodor Index', () => {
         {
             button: '#pomodoro-button-increase-by-15',
             incrementedTime: '39:30',
-            minutes: 5,
+            minutes: 15,
         },
     ])
     ('increment worktime by $minutes minutes then rewind', ({button, incrementedTime}) => {

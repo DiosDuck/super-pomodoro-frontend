@@ -8,13 +8,13 @@ import { Settings, SettingsService } from '../services/settings.service';
 import { Timer } from '../services/timer.service';
 import { WorkSessionService } from '../services/work-session.service';
 import { ALARM_AUDIO } from '../alarm-audio.token';
-import { IconButton } from './icon-button/icon-button';
+import { SvgIcon } from '../../shared/components/svg-icon/svg-icon';
 
 @Component({
     selector: 'app-pomodoro-index',
     templateUrl: './index.html',
     styleUrl: './index.scss',
-    imports: [IconButton],
+    imports: [SvgIcon],
 })
 export class Index {
     private readonly cycleService = inject(CycleService);
