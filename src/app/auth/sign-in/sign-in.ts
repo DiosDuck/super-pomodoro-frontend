@@ -5,12 +5,14 @@ import { ToastService } from '../../shared/utils/toast.service';
 import { LastRouteService } from '../../shared/utils/last-route.service';
 import { RouterLink } from "@angular/router";
 import { take } from 'rxjs';
+import { FormInput } from "../../shared/components/form/form-input/form-input";
+import { FormButton } from "../../shared/components/form/form-button/form-button";
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.html',
   styleUrls: ['./sign-in.scss'],
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, FormInput, FormButton],
 })
 export class SignIn {
   authService = inject(AuthService);
