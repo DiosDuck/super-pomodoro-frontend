@@ -1,10 +1,10 @@
 import { Routes } from "@angular/router";
-import { verifyEmailRegisterGuard } from "./verify-email.guards";
+import { verifyEmailRegisterGuard } from "./register.guard";
 
 export const VERIFY_EMAIL_ROUTES: Routes = [
     {
         path: 'register',
-        canActivate: [verifyEmailRegisterGuard],    
+        canMatch: [verifyEmailRegisterGuard],
     },
     {
         path: 'password-reset',

@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { ResetPasswordService } from "../verify-email.services";
+import { ResetPasswordService } from "../reset-password.service";
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { passwordMatchValidator } from "../../../shared/utils/password-match.validator";
 import { ToastService } from "../../../shared/utils/toast.service";

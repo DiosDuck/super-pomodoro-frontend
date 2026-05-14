@@ -1,20 +1,18 @@
 import { inject } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivateFn, Router } from "@angular/router";
+import { CanMatchFn, Router } from "@angular/router";
 import { ToastService } from "../../shared/utils/toast.service";
 import { HttpClient } from "@angular/common/http";
 import { AuthService, TokenVerification } from "../auth.service";
 import { switchMap, map, catchError, of } from "rxjs";
 
-export const verifyEmailRegisterGuard: CanActivateFn = (
-  route: ActivatedRouteSnapshot
-) => {
+export const verifyEmailRegisterGuard: CanMatchFn = () => {
     const authService = inject(AuthService);
     const toastService = inject(ToastService);
     const router = inject(Router);
     const http = inject(HttpClient);
 
-    let queryParams = route.queryParams;
-    let tokenVerification: TokenVerification = {
+    const queryParams = router.currentNavigation()?.extractedUrl.queryParams ?? {};
+    const tokenVerification: TokenVerification = {
         token: queryParams['token'] ?? '',
         id: parseInt(queryParams['id'] ?? -1),
     }
