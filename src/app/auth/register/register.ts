@@ -7,12 +7,14 @@ import { ToastService } from '../../shared/utils/toast.service';
 import { LastRouteService } from '../../shared/utils/last-route.service';
 import { catchError, take, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
+import { FormButton } from "../../shared/components/form/form-button/form-button";
+import { FormInput } from "../../shared/components/form/form-input/form-input";
 
 @Component({
   selector: 'app-register',
   templateUrl: './register.html',
   styleUrls: ['./register.scss'],
-  imports: [ReactiveFormsModule],
+  imports: [ReactiveFormsModule, FormButton, FormInput],
 })
 export class Register {
   authService = inject(AuthService);

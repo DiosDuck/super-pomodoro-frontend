@@ -5,11 +5,13 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angula
 import { AuthService } from "../auth.service";
 import { catchError, finalize, take, throwError } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
+import { FormButton } from "../../shared/components/form/form-button/form-button";
+import { FormInput } from "../../shared/components/form/form-input/form-input";
 
 @Component({
     templateUrl: 'forgot-password.html',
     styleUrls: ['forgot-password.scss'],
-    imports: [ReactiveFormsModule]
+    imports: [ReactiveFormsModule, FormButton, FormInput]
 })
 export class ForgotPassword {
     toastService = inject(ToastService);

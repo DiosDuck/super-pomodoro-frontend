@@ -1,29 +1,24 @@
 <div class="form-page">
     <h1 class="form-page-title">Register</h1>
     <form class="form-page-form" [formGroup]="registerForm" (submit)="onSubmit()">
-        <div class="form-page-form__block">
-            <label for="username" class="form-page-form__block--label">Username</label>
-            <input id="username" type="text" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('username')" formControlName="username" placeholder="username" autocomplete="off">
-        </div>
-        <div class="form-page-form__block">
-            <label for="password" class="form-page-form__block--label">Password</label>
-            <input id="password" type="password" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('password')" formControlName="password" placeholder="password" autocomplete="off">
-        </div>
-        <div class="form-page-form__block">
-            <label for="confirmPassword" class="form-page-form__block--label">Confirm Password</label>
-            <input id="confirmPassword" type="password" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('confirmPassword')" formControlName="confirmPassword" placeholder="confirmPassword" autocomplete="off">
-        </div>
-        <div class="form-page-form__block">
-            <label for="name" class="form-page-form__block--label">Name</label>
-            <input id="name" type="text" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('name')" formControlName="name" placeholder="name" autocomplete="off">
-        </div>
-        <div class="form-page-form__block">
-            <label for="enail" class="form-page-form__block--label">Email</label>
-            <input id="email" type="text" class="form-page-form__block--input" [class.form-page-form__block--invalid]="isInvalid('email')" formControlName="email" placeholder="email" autocomplete="off">
-        </div>
-        <div class="form-page-form__buttons">
-            <button type="button" class="form-page-form__button form-page-form__button--secondary" (click)="onBack()">Go back</button>
-            <button type="submit" class="form-page-form__button form-page-form__button--primary" [disabled]="!registerForm.valid && !isWaiting">Register</button>
+        <app-form-input label="Username" inputId="username">
+            <input id="username" type="username" [class.invalid]="isInvalid('username')" formControlName="username" placeholder="Username" autocomplete="off">
+        </app-form-input>
+        <app-form-input label="Password" inputId="password">
+            <input id="password" type="password" [class.invalid]="isInvalid('password')" formControlName="password" placeholder="Password" autocomplete="off">
+        </app-form-input>
+        <app-form-input label="Confirm Password" inputId="confirmPassword">
+            <input id="confirmPassword" type="confirmPassword" [class.invalid]="isInvalid('confirmPassword')" formControlName="confirmPassword" placeholder="Confirm Password" autocomplete="off">
+        </app-form-input>
+        <app-form-input label="Name" inputId="name">
+            <input id="name" type="name" [class.invalid]="isInvalid('name')" formControlName="name" placeholder="Name" autocomplete="off">
+        </app-form-input>
+        <app-form-input label="Email" inputId="email">
+            <input id="email" type="email" [class.invalid]="isInvalid('email')" formControlName="email" placeholder="Email" autocomplete="off">
+        </app-form-input>
+        <div class="form-page-form__buttons"> 
+            <app-form-button type="button" buttonId="form-button-back" buttonStyle="secondary" (onClick)="onBack()">Go back</app-form-button>
+            <app-form-button type="submit" buttonId="form-button-submit" buttonStyle="primary" [disabled]="!registerForm.valid && !isWaiting">Register</app-form-button>
         </div>
     </form>
 </div>

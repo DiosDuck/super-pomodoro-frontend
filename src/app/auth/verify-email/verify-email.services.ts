@@ -8,7 +8,7 @@ import { Observable } from "rxjs";
 export class ResetPasswordService {
     private _token : string = '';
     private _id : number = -1;
-    private _http = inject(HttpClient);
+    private readonly _http = inject(HttpClient);
 
     setParameters(token: string, id: number): void
     {

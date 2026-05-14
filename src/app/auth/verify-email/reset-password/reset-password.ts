@@ -7,11 +7,13 @@ import { ToastService } from "../../../shared/utils/toast.service";
 import { finalize, switchMap, take } from "rxjs";
 import { LastRouteService } from "../../../shared/utils/last-route.service";
 import { AuthService } from "../../auth.service";
+import { FormInput } from "../../../shared/components/form/form-input/form-input";
+import { FormButton } from "../../../shared/components/form/form-button/form-button";
 
 @Component({
     templateUrl: 'reset-password.html',
     styleUrls: ['reset-password.scss'],
-    imports: [ReactiveFormsModule],
+    imports: [ReactiveFormsModule, FormInput, FormButton],
 })
 export class ResetPassword implements OnInit{
     authService = inject(AuthService);
