@@ -7,17 +7,17 @@ import { ToastService } from "./toast.service";
     providedIn: 'root',
 })
 export class LastRouteService {
-    private _localStorageService = inject(LocalStorageService);
-    private _toastService = inject(ToastService);
-    private _router = inject(Router);
+    private readonly localStorageService = inject(LocalStorageService);
+    private readonly toastService = inject(ToastService);
+    private readonly router = inject(Router);
     private readonly _localStorageKey = 'lastRoute';
 
     async redirectToLastRoute(): Promise<boolean>
     {
         let lastRoute = this.getLastRoute();
-        let result = await this._router.navigateByUrl(lastRoute);
+        let result = await this.router.navigateByUrl(lastRoute);
         if (result === false) {
-            this._toastService.addToast('Failed to redirect', 'error');
+            this.toastService.addToast('Failed to redirect', 'error');
         }
 
         return result;
@@ -26,18 +26,18 @@ export class LastRouteService {
     updateLastRoute(url : string | null = null): void
     {
         if (url === null) {
-            url = this._router.url;
+            url = this.router.url;
         }
 
         if (url.includes('auth')) {
             return;
         }
 
-        this._localStorageService.set(this._localStorageKey, url);
+        this.localStorageService.set(this._localStorageKey, url);
     }
 
     private getLastRoute(): string
     {
-        return this._localStorageService.get(this._localStorageKey) ?? '/';
+        return this.localStorageService.get(this._localStorageKey) ?? '/';
     }
 }

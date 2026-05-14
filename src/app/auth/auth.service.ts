@@ -43,21 +43,19 @@ export interface RegisterData {
   providedIn: 'root'
 })
 export class AuthService {
-    constructor(
-        private _http: HttpClient,
-        private _userService: UserService,
-        private _userToken: UserToken,
-    ) { }
+    private readonly http = inject(HttpClient);
+    private readonly userService = inject(UserService);
+    private readonly userToken = inject(UserToken);
 
     login(loginData : LoginData): Observable<User>
     {
-        return this._http.post<TokenResponse>(
+        return this.http.post<TokenResponse>(
             '/api/auth/login', 
             loginData, 
             {context: new HttpContext().set(SKIP_TOKEN, true)}
         ).pipe(
             switchMap(token => {
-                this._userToken.set(token);
+                this.userToken.set(token);
                 return this.getUser();
             }),
         )
@@ -67,10 +65,10 @@ export class AuthService {
     loadUser(token : TokenResponse | null = null): Observable<NullableUser> 
     {
         if (token !== null) {
-            this._userToken.set(token);
+            this.userToken.set(token);
         }
 
-        if (!this._userToken.isSet()) {
+        if (!this.userToken.isSet()) {
             this.removeUser();
             return of(null);
         }
@@ -80,58 +78,58 @@ export class AuthService {
 
     getObservableUser(): Observable<NullableUser>
     {
-        return this._userService.user$;
+        return this.userService.user$;
     }
 
     register(registerData : RegisterData): Observable<Object> 
     {
-        return this._http.put('/api/auth/register', registerData, {context: new HttpContext().set(SKIP_TOKEN, true)});
+        return this.http.put('/api/auth/register', registerData, {context: new HttpContext().set(SKIP_TOKEN, true)});
     }
     
     resetPassword(username : string): Observable<Object> 
     {
-        return this._http.put('/api/auth/password/forgot-password', {username: username});
+        return this.http.put('/api/auth/password/forgot-password', {username: username});
     }
 
     logout(): Observable<unknown>
     {
-        if (!this._userToken.isSet()) {
-            this._userService.setUser(null);
+        if (!this.userToken.isSet()) {
+            this.userService.setUser(null);
             return of(null);
         }
 
-        return this._http.post('/api/auth/logout', {
-            refresh_token: this._userToken.getRefreshToken()
+        return this.http.post('/api/auth/logout', {
+            refresh_token: this.userToken.getRefreshToken()
         })
             .pipe(tap(() => this.removeUser()));
     }
 
     refreshToken(): Observable<User>
     {
-        return this._http.post<TokenResponse>('/api/auth/token/refresh', {
-            refresh_token: this._userToken.getRefreshToken()
+        return this.http.post<TokenResponse>('/api/auth/token/refresh', {
+            refresh_token: this.userToken.getRefreshToken()
         }, {context: new HttpContext().set(SKIP_TOKEN, true)}).pipe(
-            switchMap(token => {this._userToken.set(token); return this.getUser()}),
+            switchMap(token => {this.userToken.set(token); return this.getUser()}),
             catchError((error) => {this.removeUser(); return throwError(() => error)})
         );
     }
 
     getToken(): string | null
     {
-        return this._userToken.getToken();
+        return this.userToken.getToken();
     }
 
     private removeUser(): void
     {
-        this._userService.setUser(null);
-        this._userToken.remove();
+        this.userService.setUser(null);
+        this.userToken.remove();
     }
 
     private getUser(): Observable<User>
     {
-        return this._http.get<User>('/api/profile')
+        return this.http.get<User>('/api/profile')
             .pipe(
-                tap(user => this._userService.setUser(user)),
+                tap(user => this.userService.setUser(user)),
             )
         ;
     }
