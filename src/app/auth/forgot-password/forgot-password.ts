@@ -10,7 +10,7 @@ import { AuthService } from '../auth.service';
 import { FormButton } from '../../shared/components/form/form-button/form-button';
 import { FormInput } from '../../shared/components/form/form-input/form-input';
 import { HTTP_TOO_MANY_REQUESTS } from '../../shared/constants/http-status';
-import { LONG_TOAST_DURATION } from '../../shared/constants/toast';
+import { LONG_TOAST_DURATION } from '../../shared/utils/toast.service';
 
 const TOAST_RATE_LIMITED = 'Too many attempts, please wait';
 const TOAST_CHECK_INBOX = 'If the username exists, check your inbox!';

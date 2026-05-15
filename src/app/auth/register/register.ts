@@ -12,11 +12,8 @@ import { LastRouteService } from '../../shared/utils/last-route.service';
 import { FormButton } from '../../shared/components/form/form-button/form-button';
 import { FormInput } from '../../shared/components/form/form-input/form-input';
 import { HTTP_TOO_MANY_REQUESTS } from '../../shared/constants/http-status';
-import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from '../../shared/constants/validation';
-import { LONG_TOAST_DURATION } from '../../shared/constants/toast';
-
-const USERNAME_MIN_LENGTH = 6;
-const USERNAME_MAX_LENGTH = 20;
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH, USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH } from '../../shared/constants/validation';
+import { LONG_TOAST_DURATION } from '../../shared/utils/toast.service';
 
 const TOAST_RATE_LIMITED = 'Too many register attempts in short time, please wait';
 const TOAST_USERNAME_TAKEN = 'Username is already taken';

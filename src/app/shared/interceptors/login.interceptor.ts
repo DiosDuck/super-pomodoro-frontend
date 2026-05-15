@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpEvent, HttpHandlerFn, HttpRequest } from "@angul
 import { catchError, Observable, switchMap, throwError } from "rxjs";
 import { inject } from "@angular/core";
 import { AuthService, SKIP_TOKEN } from "../../auth/auth.service";
+import { HTTP_UNAUTHORIZED } from "../constants/http-status";
 
 export function userInterceptor(
   req: HttpRequest<unknown>,
@@ -16,7 +17,7 @@ export function userInterceptor(
     return makeAuthorizationCall(req, next, token)
       .pipe(
         catchError((error: HttpErrorResponse) => {
-          if (error.status === 401) {
+          if (error.status === HTTP_UNAUTHORIZED) {
             return handleUnauthorizedError(req, next, authService)
           }
 

@@ -1,1 +1,2 @@
 export const HTTP_TOO_MANY_REQUESTS = 429;
+export const HTTP_UNAUTHORIZED = 401;

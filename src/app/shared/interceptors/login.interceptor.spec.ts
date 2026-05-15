@@ -4,6 +4,7 @@ import { TestBed } from "@angular/core/testing";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { userInterceptor } from "./login.interceptor";
 import { SKIP_TOKEN, UserToken } from "../../auth/auth.service";
+import { HTTP_UNAUTHORIZED } from "../constants/http-status";
 
 describe('Login Interceptor', () => {
     let http: HttpClient;
@@ -68,7 +69,7 @@ describe('Login Interceptor', () => {
         http.get('/api/test').subscribe();
         let req = httpMock.expectOne('/api/test');
         expect(req.request.headers.get('Authorization')).toBe('Bearer abcdef');
-        req.flush({message: 'error'}, {status: 401, statusText: 'Unauthorized'});
+        req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
         req = httpMock.expectOne('/api/auth/token/refresh');
         req.flush({token: 'qwerty', refresh_token: '123456'});
@@ -101,7 +102,7 @@ describe('Login Interceptor', () => {
         });
         let req = httpMock.expectOne('/api/test');
         expect(req.request.headers.get('Authorization')).toBe('Bearer abcdef');
-        req.flush({message: 'error'}, {status: 401, statusText: 'Unauthorized'});
+        req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
         req = httpMock.expectOne('/api/auth/token/refresh');
         req.flush({token: 'qwerty', refresh_token: '123456'});
@@ -129,15 +130,15 @@ describe('Login Interceptor', () => {
 
         http.get('/api/test').subscribe({
             error: (err: HttpErrorResponse) => {
-                expect(err.status).toBe(401);
+                expect(err.status).toBe(HTTP_UNAUTHORIZED);
             }
         });
         let req = httpMock.expectOne('/api/test');
         expect(req.request.headers.get('Authorization')).toBe('Bearer abcdef');
-        req.flush({message: 'error'}, {status: 401, statusText: 'Unauthorized'});
+        req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
         req = httpMock.expectOne('/api/auth/token/refresh');
-        req.flush({message: 'Unauthorized'}, {status: 401, statusText: 'Unauthorized'});
+        req.flush({message: 'Unauthorized'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
         expect(userToken.get()).toBeNull();
     });

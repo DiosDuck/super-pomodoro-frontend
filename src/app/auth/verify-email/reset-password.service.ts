@@ -6,21 +6,21 @@ import { Observable } from "rxjs";
     providedIn: 'root',
 })
 export class ResetPasswordService {
-    private _token : string = '';
-    private _id : number = -1;
-    private readonly _http = inject(HttpClient);
+    private token : string = '';
+    private id : number = -1;
+    private readonly http = inject(HttpClient);
 
     setParameters(token: string, id: number): void
     {
-        this._token = token;
-        this._id = id;
+        this.token = token;
+        this.id = id;
     }
 
     updatePassword(newPassword: string): Observable<Object>
     {
-        return this._http.post('/api/auth/password/reset-password', {
-            token: this._token,
-            id: this._id,
+        return this.http.post('/api/auth/password/reset-password', {
+            token: this.token,
+            id: this.id,
             newPassword: newPassword
         });
     }

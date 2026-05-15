@@ -1,5 +1,7 @@
 import { Injectable, signal } from "@angular/core";
 
+export const LONG_TOAST_DURATION = 10;
+
 export type status = "success" | "error" | "note";
 
 export interface Toast {
