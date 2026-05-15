@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  vitest:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,11 +21,39 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      - name: Cache node_modules
+        uses: actions/cache/save@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+
+  vitest:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Restore node_modules
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
 
       - name: Running Tests
         run: npm run test-ci
 
   npm-audit:
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -38,12 +66,16 @@ jobs:
           node-version: 20
           cache: npm
 
-      - name: Install
-        run: npm ci
+      - name: Restore node_modules
+        uses: actions/cache/restore@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-node-modules-${{ hashFiles('package-lock.json') }}
+          fail-on-cache-miss: true
 
       - name: NPM Audit JSON Data
         run: npm audit --json > npm-audit-results.json
-      
+
       - name: Check JSON
         uses: actions/upload-artifact@v6
         with:
