@@ -2,23 +2,23 @@
     <h1 class="form-page-title">Register</h1>
     <form class="form-page-form" [formGroup]="registerForm" (submit)="onSubmit()">
         <app-form-input label="Username" inputId="username">
-            <input id="username" type="username" [class.invalid]="isInvalid('username')" formControlName="username" placeholder="Username" autocomplete="off">
+            <input id="username" type="text" [class.invalid]="invalid.username()" formControlName="username" placeholder="Username" autocomplete="off">
         </app-form-input>
         <app-form-input label="Password" inputId="password">
-            <input id="password" type="password" [class.invalid]="isInvalid('password')" formControlName="password" placeholder="Password" autocomplete="off">
+            <input id="password" type="password" [class.invalid]="invalid.password()" formControlName="password" placeholder="Password" autocomplete="off">
         </app-form-input>
         <app-form-input label="Confirm Password" inputId="confirmPassword">
-            <input id="confirmPassword" type="confirmPassword" [class.invalid]="isInvalid('confirmPassword')" formControlName="confirmPassword" placeholder="Confirm Password" autocomplete="off">
+            <input id="confirmPassword" type="password" [class.invalid]="invalid.confirmPassword()" formControlName="confirmPassword" placeholder="Confirm Password" autocomplete="off">
         </app-form-input>
         <app-form-input label="Name" inputId="name">
-            <input id="name" type="name" [class.invalid]="isInvalid('name')" formControlName="name" placeholder="Name" autocomplete="off">
+            <input id="name" type="text" [class.invalid]="invalid.name()" formControlName="name" placeholder="Name" autocomplete="off">
         </app-form-input>
         <app-form-input label="Email" inputId="email">
-            <input id="email" type="email" [class.invalid]="isInvalid('email')" formControlName="email" placeholder="Email" autocomplete="off">
+            <input id="email" type="email" [class.invalid]="invalid.email()" formControlName="email" placeholder="Email" autocomplete="off">
         </app-form-input>
-        <div class="form-page-form__buttons"> 
+        <div class="form-page-form__buttons">
             <app-form-button type="button" buttonId="form-button-back" buttonStyle="secondary" (onClick)="onBack()">Go back</app-form-button>
-            <app-form-button type="submit" buttonId="form-button-submit" buttonStyle="primary" [disabled]="!registerForm.valid && !isWaiting">Register</app-form-button>
+            <app-form-button type="submit" buttonId="form-button-submit" buttonStyle="primary" [disabled]="!canSubmit()">Register</app-form-button>
         </div>
     </form>
 </div>

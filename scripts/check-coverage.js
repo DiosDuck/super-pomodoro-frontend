@@ -1,8 +1,12 @@
 const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 
-const THRESHOLD = 85;
-const METRICS = ['lines', 'branches', 'functions', 'statements'];
+const THRESHOLDS = {
+  lines: 90,
+  branches: 80,
+  functions: 90,
+  statements: 90,
+};
 
 const summaryPath = join(__dirname, '..', 'coverage', 'coverage-summary.json');
 
@@ -18,24 +22,33 @@ try {
 const total = summary.total;
 const failures = [];
 
-console.log(`\nCoverage threshold: ${THRESHOLD}%\n`);
-console.log('  Metric        Coverage   Status');
-console.log('  ------------- ---------- ------');
+console.log('\nCoverage thresholds:');
+for (const [metric, threshold] of Object.entries(THRESHOLDS)) {
+  console.log(`  ${metric.padEnd(13)} >= ${threshold}%`);
+}
+console.log();
 
-for (const metric of METRICS) {
+console.log('  Metric        Coverage   Threshold Status');
+console.log('  ------------- ---------- --------- ------');
+
+for (const [metric, threshold] of Object.entries(THRESHOLDS)) {
   const pct = total[metric].pct;
-  const pass = pct >= THRESHOLD;
+  const pass = pct >= threshold;
   const status = pass ? 'PASS' : 'FAIL';
   const label = metric.padEnd(13);
   const value = `${pct.toFixed(2)}%`.padStart(10);
-  console.log(`  ${label} ${value} ${status}`);
-  if (!pass) failures.push({ metric, pct });
+  const limit = `>= ${threshold}%`.padStart(9);
+  console.log(`  ${label} ${value} ${limit} ${status}`);
+  if (!pass) failures.push({ metric, pct, threshold });
 }
 
 console.log();
 
 if (failures.length > 0) {
-  console.error(`Coverage below ${THRESHOLD}% for: ${failures.map(f => f.metric).join(', ')}`);
+  console.error('Coverage below threshold:');
+  for (const f of failures) {
+    console.error(`  ${f.metric}: ${f.pct.toFixed(2)}% < ${f.threshold}%`);
+  }
   process.exit(1);
 } else {
   console.log('All coverage thresholds passed.');

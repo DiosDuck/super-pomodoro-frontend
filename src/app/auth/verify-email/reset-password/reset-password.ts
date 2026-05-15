@@ -1,41 +1,66 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { ResetPasswordService } from "../reset-password.service";
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
-import { passwordMatchValidator } from "../../../shared/utils/password-match.validator";
-import { ToastService } from "../../../shared/utils/toast.service";
-import { finalize, switchMap, take } from "rxjs";
-import { LastRouteService } from "../../../shared/utils/last-route.service";
-import { AuthService } from "../../auth.service";
-import { FormInput } from "../../../shared/components/form/form-input/form-input";
-import { FormButton } from "../../../shared/components/form/form-button/form-button";
+import { ChangeDetectionStrategy, Component, computed, inject, OnInit, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { finalize, switchMap, take } from 'rxjs';
+
+import { ResetPasswordService } from '../reset-password.service';
+import { passwordMatchValidator } from '../../../shared/utils/password-match.validator';
+import { ToastService } from '../../../shared/utils/toast.service';
+import { LastRouteService } from '../../../shared/utils/last-route.service';
+import { AuthService } from '../../auth.service';
+import { FormInput } from '../../../shared/components/form/form-input/form-input';
+import { FormButton } from '../../../shared/components/form/form-button/form-button';
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from '../../../shared/constants/validation';
+
+const TOAST_RESET_OK = 'Successfully reseted the password!';
+const TOAST_RESET_FAIL = 'There has been an error!';
 
 @Component({
     templateUrl: 'reset-password.html',
     styleUrls: ['reset-password.scss'],
     imports: [ReactiveFormsModule, FormInput, FormButton],
+    changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ResetPassword implements OnInit{
-    authService = inject(AuthService);
-    resetPasswordService = inject(ResetPasswordService);
-    route = inject(ActivatedRoute);
-    toastService = inject(ToastService);
-    lastRouteService = inject(LastRouteService);
-    resetPasswordForm = new FormGroup(
+export class ResetPassword implements OnInit {
+    private readonly fb = inject(FormBuilder);
+    private readonly authService = inject(AuthService);
+    private readonly resetPasswordService = inject(ResetPasswordService);
+    private readonly route = inject(ActivatedRoute);
+    private readonly toastService = inject(ToastService);
+    private readonly lastRouteService = inject(LastRouteService);
+
+    public readonly isWaiting = signal(false);
+
+    public readonly resetPasswordForm = this.fb.nonNullable.group(
         {
-            password: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)]),
-            confirmPassword: new FormControl('', [Validators.required, Validators.minLength(6), Validators.maxLength(20)])
+            password: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH), Validators.maxLength(PASSWORD_MAX_LENGTH)]],
+            confirmPassword: ['', [Validators.required, Validators.minLength(PASSWORD_MIN_LENGTH), Validators.maxLength(PASSWORD_MAX_LENGTH)]],
         },
-        {validators: [passwordMatchValidator('password', 'confirmPassword')]}
+        { validators: [passwordMatchValidator('password', 'confirmPassword')] },
     );
-    isWaiting = false;
+
+    private readonly formEvents = toSignal(this.resetPasswordForm.events, { initialValue: null });
+
+    public readonly invalid = {
+        password: computed(() => {
+            this.formEvents();
+            return this.simpleInvalid('password');
+        }),
+        confirmPassword: computed(() => {
+            this.formEvents();
+            return this.confirmPasswordInvalid();
+        }),
+    };
+
+    public readonly canSubmit = computed(() => {
+        this.formEvents();
+        return this.resetPasswordForm.valid && !this.isWaiting();
+    });
 
     ngOnInit(): void {
         this.authService.logout()
-            .pipe(
-                take(1),
-                switchMap(() => this.route.queryParams.pipe(take(1))),
-            )
+            .pipe(switchMap(() => this.route.queryParams.pipe(take(1))))
             .subscribe((params) => {
                 this.resetPasswordService.setParameters(
                     params['token'],
@@ -44,33 +69,35 @@ export class ResetPassword implements OnInit{
             });
     }
 
-    onSubmit() {
-        this.isWaiting = true;
-        this.resetPasswordService.updatePassword(
-                this.resetPasswordForm.value.password!
-            )
-            .pipe(
-                take(1),
-                finalize(() => this.isWaiting = false)
-            )
-            .subscribe({
-                next: () => {
-                    this.toastService.addToast('Successfully reseted the password!', 'success');
-                    this.lastRouteService.redirectToLastRoute();
-                },
-                error: () => 
-                    this.toastService.addToast('There has been an error!', 'error')
-                
-            })
-    }
-
-    isInvalid(key: string): boolean 
-    {
-        const controller = this.resetPasswordForm.get(key);
-        if (!controller) {
-            return true;
+    onSubmit(): void {
+        if (!this.canSubmit()) {
+            return;
         }
 
-        return controller.touched && (controller.invalid ||  this.resetPasswordForm.hasError('passwordMatch'));
+        this.isWaiting.set(true);
+
+        const { password } = this.resetPasswordForm.getRawValue();
+
+        this.resetPasswordService.updatePassword(password)
+            .pipe(finalize(() => this.isWaiting.set(false)))
+            .subscribe({
+                next: () => {
+                    this.toastService.addToast(TOAST_RESET_OK, 'success');
+                    this.lastRouteService.redirectToLastRoute();
+                },
+                error: () => {
+                    this.toastService.addToast(TOAST_RESET_FAIL, 'error');
+                },
+            });
+    }
+
+    private simpleInvalid(key: 'password'): boolean {
+        const control = this.resetPasswordForm.controls[key];
+        return control.touched && control.invalid;
+    }
+
+    private confirmPasswordInvalid(): boolean {
+        const control = this.resetPasswordForm.controls.confirmPassword;
+        return control.touched && (control.invalid || this.resetPasswordForm.hasError('passwordMatch'));
     }
 }

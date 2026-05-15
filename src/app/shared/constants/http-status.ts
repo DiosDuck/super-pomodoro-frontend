@@ -1,0 +1,1 @@
+export const HTTP_TOO_MANY_REQUESTS = 429;

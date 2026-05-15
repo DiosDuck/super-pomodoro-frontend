@@ -10,7 +10,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 describe('Authentication Forgot Password', () => {
     let toastService: { addToast: Mock };
     let lastRouteService: { redirectToLastRoute: Mock };
-    let fixure: ComponentFixture<ForgotPassword>;
+    let fixture: ComponentFixture<ForgotPassword>;
     let component: ForgotPassword;
     let nativeElement: HTMLElement;
     let authService: { resetPassword: Mock };
@@ -29,10 +29,10 @@ describe('Authentication Forgot Password', () => {
             ]
         });
 
-        fixure = TestBed.createComponent(ForgotPassword);
-        component = fixure.componentInstance;
-        nativeElement = fixure.nativeElement;
-        fixure.detectChanges();
+        fixture = TestBed.createComponent(ForgotPassword);
+        component = fixture.componentInstance;
+        nativeElement = fixture.nativeElement;
+        fixture.detectChanges();
     });
 
     it('go back button', () => {
@@ -42,54 +42,64 @@ describe('Authentication Forgot Password', () => {
         expect(lastRouteService.redirectToLastRoute).toHaveBeenCalledOnce();
     });
 
+    it('does not submit when form is invalid', () => {
+        component.onSubmit();
+
+        expect(authService.resetPassword).not.toHaveBeenCalled();
+        expect(toastService.addToast).not.toHaveBeenCalled();
+    });
+
     it('success sending email', () => {
         vi.spyOn(authService, 'resetPassword').mockReturnValue(of(null));
 
         let submit = nativeElement.querySelector<HTMLButtonElement>('#form-button-submit')!;
-        component.forgotPasswordForm.get('username')!.setValue('username');
+        component.forgotPasswordForm.setValue({ username: 'username' });
         component.forgotPasswordForm.markAllAsTouched();
         component.forgotPasswordForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(submit.disabled).toBe(false);
 
         submit.click();
-        fixure.detectChanges();
+        fixture.detectChanges();
 
         expect(authService.resetPassword).toHaveBeenCalledOnce();
-        expect(toastService.addToast).toHaveBeenCalledWith("If the username exist, check your inbox!", "success", 10);
+        expect(toastService.addToast).toHaveBeenCalledOnce();
+        expect(toastService.addToast).toHaveBeenCalledWith("If the username exists, check your inbox!", "success", 10);
     });
 
     it('hide user not found error', () => {
         vi.spyOn(authService, 'resetPassword').mockReturnValue(throwError(() => new HttpErrorResponse({status: 404, statusText: 'User not found'})));
 
         let submit = nativeElement.querySelector<HTMLButtonElement>('#form-button-submit')!;
-        component.forgotPasswordForm.get('username')!.setValue('username');
+        component.forgotPasswordForm.setValue({ username: 'username' });
         component.forgotPasswordForm.markAllAsTouched();
         component.forgotPasswordForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(submit.disabled).toBe(false);
 
         submit.click();
-        fixure.detectChanges();
+        fixture.detectChanges();
 
         expect(authService.resetPassword).toHaveBeenCalledOnce();
-        expect(toastService.addToast).toHaveBeenCalledWith("If the username exist, check your inbox!", "success", 10);
+        expect(toastService.addToast).toHaveBeenCalledOnce();
+        expect(toastService.addToast).toHaveBeenCalledWith("If the username exists, check your inbox!", "success", 10);
     });
 
     it('limit rate error', () => {
         vi.spyOn(authService, 'resetPassword').mockReturnValue(throwError(() => new HttpErrorResponse({status: 429, statusText: 'Too Many calls'})));
 
         let submit = nativeElement.querySelector<HTMLButtonElement>('#form-button-submit')!;
-        component.forgotPasswordForm.get('username')!.setValue('username');
+        component.forgotPasswordForm.setValue({ username: 'username' });
         component.forgotPasswordForm.markAllAsTouched();
         component.forgotPasswordForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(submit.disabled).toBe(false);
 
         submit.click();
-        fixure.detectChanges();
+        fixture.detectChanges();
 
         expect(authService.resetPassword).toHaveBeenCalledOnce();
+        expect(toastService.addToast).toHaveBeenCalledOnce();
         expect(toastService.addToast).toHaveBeenCalledWith("Too many attempts, please wait", "error");
     });
 });

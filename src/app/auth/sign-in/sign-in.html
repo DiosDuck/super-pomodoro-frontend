@@ -2,7 +2,7 @@
     <h1 class="form-page-title">Sign in</h1>
     <form class="form-page-form" [formGroup]="loginForm" (submit)="onSubmit()">
         <app-form-input label="Username" inputId="username" class="center-row">
-            <input id="username" type="username" formControlName="username" placeholder="Username" autocomplete="off">
+            <input id="username" type="text" formControlName="username" placeholder="Username" autocomplete="off">
         </app-form-input>
         <app-form-input label="Password" inputId="password" class="center-row">
             <input id="password" type="password" formControlName="password" placeholder="Password" autocomplete="off">
@@ -12,7 +12,7 @@
         </div>
         <div class="form-page-form__buttons">
             <app-form-button type="button" buttonId="form-button-back" buttonStyle="secondary" (onClick)="onBack()">Go back</app-form-button>
-            <app-form-button type="submit" buttonId="form-button-submit" buttonStyle="primary" [disabled]="!loginForm.valid && !isWaiting">Login</app-form-button>
+            <app-form-button type="submit" buttonId="form-button-submit" buttonStyle="primary" [disabled]="!canSubmit()">Login</app-form-button>
         </div>
     </form>
 </div>

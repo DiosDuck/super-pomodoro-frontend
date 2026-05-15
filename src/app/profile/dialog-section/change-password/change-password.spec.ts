@@ -7,7 +7,7 @@ import { provideHttpClient } from "@angular/common/http";
 import { Router } from "@angular/router";
 
 describe('Change Password Component', () => {
-    let fixure: ComponentFixture<ChangePassword>;
+    let fixture: ComponentFixture<ChangePassword>;
     let httpMock: HttpTestingController;
     let component: ChangePassword;
     let toastService: ToastService;
@@ -25,61 +25,70 @@ describe('Change Password Component', () => {
             ]
         });
 
-        fixure = TestBed.createComponent(ChangePassword);
+        fixture = TestBed.createComponent(ChangePassword);
         httpMock = TestBed.inject(HttpTestingController);
         toastService = TestBed.inject(ToastService);
-        component = fixure.componentInstance;
+        component = fixture.componentInstance;
     });
 
     afterEach(() => {
         httpMock.verify();
     });
 
-    it('Validator testing', () => {
-        let nativeElement: HTMLElement = fixure.nativeElement;
-        let oldPassword = component.changePasswordForm.get('oldPassword');
-        let newPassowrd = component.changePasswordForm.get('newPassword');
-        let confirmPassword = component.changePasswordForm.get('confirmPassword');
+    it('does not submit when form is invalid', () => {
+        component.onSubmit();
 
-        oldPassword?.setValue('');
-        newPassowrd?.setValue('new_password');
-        confirmPassword?.setValue('new_password');
+        httpMock.expectNone('/api/auth/password/change-password');
+        expect(toastService.toastList().length).toBe(0);
+        expect(routerMock.navigateByUrl).not.toHaveBeenCalled();
+    });
+
+    it('Validator testing', () => {
+        let nativeElement: HTMLElement = fixture.nativeElement;
+
+        component.changePasswordForm.setValue({
+            oldPassword: '',
+            newPassword: 'new_password',
+            confirmPassword: 'new_password',
+        });
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(nativeElement.querySelector('#oldPassword')?.classList.contains('invalid')).toBe(true);
         expect(nativeElement.querySelector('#newPassword')?.classList.contains('invalid')).toBe(false);
         expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('invalid')).toBe(false);
-    
-        oldPassword?.setValue('old_password');
-        newPassowrd?.setValue('different_password');
-        confirmPassword?.setValue('new_password');
+
+        component.changePasswordForm.setValue({
+            oldPassword: 'old_password',
+            newPassword: 'different_password',
+            confirmPassword: 'new_password',
+        });
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(nativeElement.querySelector('#oldPassword')?.classList.contains('invalid')).toBe(false);
         expect(nativeElement.querySelector('#newPassword')?.classList.contains('invalid')).toBe(false);
         expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('invalid')).toBe(true);
 
-        oldPassword?.setValue('old_password');
-        newPassowrd?.setValue('new_password');
-        confirmPassword?.setValue('new_password');
+        component.changePasswordForm.setValue({
+            oldPassword: 'old_password',
+            newPassword: 'new_password',
+            confirmPassword: 'new_password',
+        });
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(nativeElement.querySelector('#oldPassword')?.classList.contains('invalid')).toBe(false);
         expect(nativeElement.querySelector('#newPassword')?.classList.contains('invalid')).toBe(false);
         expect(nativeElement.querySelector('#confirmPassword')?.classList.contains('invalid')).toBe(false);
     });
 
     it('Invalid input', () => {
-        let oldPassword = component.changePasswordForm.get('oldPassword');
-        let newPassowrd = component.changePasswordForm.get('newPassword');
-        let confirmPassword = component.changePasswordForm.get('confirmPassword');
-
-        oldPassword?.setValue('wrong_password');
-        newPassowrd?.setValue('new_password');
-        confirmPassword?.setValue('new_password');
+        component.changePasswordForm.setValue({
+            oldPassword: 'wrong_password',
+            newPassword: 'new_password',
+            confirmPassword: 'new_password',
+        });
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
         component.onSubmit();
@@ -92,13 +101,11 @@ describe('Change Password Component', () => {
     });
 
     it('Valid input', () => {
-        let oldPassword = component.changePasswordForm.get('oldPassword');
-        let newPassowrd = component.changePasswordForm.get('newPassword');
-        let confirmPassword = component.changePasswordForm.get('confirmPassword');
-
-        oldPassword?.setValue('right_password');
-        newPassowrd?.setValue('new_password');
-        confirmPassword?.setValue('new_password');
+        component.changePasswordForm.setValue({
+            oldPassword: 'right_password',
+            newPassword: 'new_password',
+            confirmPassword: 'new_password',
+        });
         component.changePasswordForm.markAllAsTouched();
         component.changePasswordForm.updateValueAndValidity();
         component.onSubmit();
@@ -108,6 +115,7 @@ describe('Change Password Component', () => {
 
         expect(toastService.toastList().length).toBe(1);
         expect(toastService.toastList()[0].status).toEqual('note');
+        expect(toastService.toastList()[0].message).toEqual('Password has been changed, please log in.');
         expect(routerMock.navigateByUrl).toHaveBeenCalledWith('/auth/sign-in');
     })
 });

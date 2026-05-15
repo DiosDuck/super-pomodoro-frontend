@@ -7,7 +7,7 @@ import { ToastService } from "../../../shared/utils/toast.service";
 import { Router } from "@angular/router";
 
 describe('Delete Account Component', () => {
-    let fixure: ComponentFixture<DeleteAccount>;
+    let fixture: ComponentFixture<DeleteAccount>;
     let httpMock: HttpTestingController;
     let component: DeleteAccount;
     let toastService: ToastService;
@@ -25,36 +25,43 @@ describe('Delete Account Component', () => {
             ]
         });
 
-        fixure = TestBed.createComponent(DeleteAccount);
+        fixture = TestBed.createComponent(DeleteAccount);
         httpMock = TestBed.inject(HttpTestingController);
         toastService = TestBed.inject(ToastService);
-        component = fixure.componentInstance;
+        component = fixture.componentInstance;
     });
 
     afterEach(() => {
         httpMock.verify();
     });
 
-    it('Validator testing', () => {
-        let nativeElement: HTMLElement = fixure.nativeElement;
-        let passwordInput: HTMLInputElement = nativeElement.querySelector('#password')!;
-        let passwordController = component.deleteAccountForm.get('password')!;
+    it('does not submit when form is invalid', () => {
+        component.onSubmit();
 
-        passwordController.setValue('');
-        passwordController.markAsTouched();
+        httpMock.expectNone('/api/profile');
+        expect(toastService.toastList().length).toBe(0);
+        expect(routerMock.navigateByUrl).not.toHaveBeenCalled();
+    });
+
+    it('Validator testing', () => {
+        let nativeElement: HTMLElement = fixture.nativeElement;
+        let passwordInput: HTMLInputElement = nativeElement.querySelector('#password')!;
+
+        component.deleteAccountForm.setValue({ password: '' });
+        component.deleteAccountForm.markAllAsTouched();
         component.deleteAccountForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(passwordInput.classList.contains('invalid')).toBe(true);
 
-        passwordController.setValue('right_password');
-        passwordController.markAsTouched();
+        component.deleteAccountForm.setValue({ password: 'right_password' });
+        component.deleteAccountForm.markAllAsTouched();
         component.deleteAccountForm.updateValueAndValidity();
-        fixure.detectChanges();
+        fixture.detectChanges();
         expect(passwordInput.classList.contains('invalid')).toBe(false);
     });
 
     it('Invalid password', () => {
-        component.deleteAccountForm.value.password = 'wrong_password';
+        component.deleteAccountForm.setValue({ password: 'wrong_password' });
         component.onSubmit();
 
         let req = httpMock.expectOne('/api/profile');
@@ -64,8 +71,8 @@ describe('Delete Account Component', () => {
         expect(toastService.toastList()[0].status).toEqual('error');
     });
 
-    it('Valid passowrd', () => {
-        component.deleteAccountForm.value.password = 'right_password';
+    it('Valid password', () => {
+        component.deleteAccountForm.setValue({ password: 'right_password' });
         component.onSubmit();
 
         let req = httpMock.expectOne('/api/profile');
@@ -73,6 +80,7 @@ describe('Delete Account Component', () => {
 
         expect(toastService.toastList().length).toBe(1);
         expect(toastService.toastList()[0].status).toEqual('note');
+        expect(toastService.toastList()[0].message).toEqual('User has been deleted.');
         expect(routerMock.navigateByUrl).toHaveBeenCalledWith('/auth/sign-in');
     });
 });

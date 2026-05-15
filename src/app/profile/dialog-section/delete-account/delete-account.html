@@ -2,10 +2,10 @@
     <h3 class="form-page-info">Caution! This operation cannot be reverted!</h3>
     <form class="form-page-form" [formGroup]="deleteAccountForm" (submit)="onSubmit()">
         <app-form-input label="Password" inputId="password">
-            <input id="password" type="password" [class.invalid]="isInvalid('password')" formControlName="password" placeholder="Password" autocomplete="off">
+            <input id="password" type="password" [class.invalid]="invalid.password()" formControlName="password" placeholder="Password" autocomplete="off">
         </app-form-input>
         <div class="form-page-form__buttons">
-            <app-form-button type="submit" buttonId="form-button-submit" buttonStyle="danger" [disabled]="!deleteAccountForm.valid && !isWaiting">Delete account</app-form-button>
+            <app-form-button type="submit" buttonId="form-button-submit" buttonStyle="danger" [disabled]="!canSubmit()">Delete account</app-form-button>
         </div>
     </form>
 </div>
