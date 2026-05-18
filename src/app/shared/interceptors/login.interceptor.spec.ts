@@ -71,7 +71,7 @@ describe('Login Interceptor', () => {
         expect(req.request.headers.get('Authorization')).toBe('Bearer abcdef');
         req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
-        req = httpMock.expectOne('/api/auth/token/refresh');
+        req = httpMock.expectOne('/api/auth/refresh');
         req.flush({token: 'qwerty'});
         
         req = httpMock.expectOne('/api/profile');
@@ -104,7 +104,7 @@ describe('Login Interceptor', () => {
         expect(req.request.headers.get('Authorization')).toBe('Bearer abcdef');
         req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
-        req = httpMock.expectOne('/api/auth/token/refresh');
+        req = httpMock.expectOne('/api/auth/refresh');
         req.flush({token: 'qwerty'});
         
         req = httpMock.expectOne('/api/profile');
@@ -137,7 +137,7 @@ describe('Login Interceptor', () => {
         expect(req.request.headers.get('Authorization')).toBe('Bearer abcdef');
         req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
-        req = httpMock.expectOne('/api/auth/token/refresh');
+        req = httpMock.expectOne('/api/auth/refresh');
         req.flush({message: 'Unauthorized'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
         expect(userToken.get()).toBeNull();

@@ -9,7 +9,7 @@ const LOADER_URLS = [
     '/api/pomodoro/session/history',
     '/api/auth/password/forgot-password',
     '/api/profile',
-    '/api/auth/token/refresh'
+    '/api/auth/refresh'
 ];
 
 export function loaderInterceptor(

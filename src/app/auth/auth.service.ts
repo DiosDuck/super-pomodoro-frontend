@@ -103,7 +103,7 @@ export class AuthService {
 
     refreshToken(): Observable<User>
     {
-        return this.http.post<TokenResponse>('/api/auth/token/refresh', {}, {
+        return this.http.post<TokenResponse>('/api/auth/refresh', {}, {
             context: new HttpContext().set(SKIP_TOKEN, true),
             withCredentials: true,
         }).pipe(
