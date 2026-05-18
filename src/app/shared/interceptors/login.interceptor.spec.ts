@@ -40,7 +40,7 @@ describe('Login Interceptor', () => {
 
     it('with success token', () => {
         const userToken = TestBed.inject(UserToken);
-        userToken.set({token: 'abcdef', refresh_token: '123456'});
+        userToken.set({token: 'abcdef'});
 
         http.get('/api/test').subscribe();
         const req = httpMock.expectOne('/api/test');
@@ -50,7 +50,7 @@ describe('Login Interceptor', () => {
 
     it('with error other than 401', () => {
         const userToken = TestBed.inject(UserToken);
-        userToken.set({token: 'abcdef', refresh_token: '123456'});
+        userToken.set({token: 'abcdef'});
 
         http.get('/api/test').subscribe({
             error: (err: HttpErrorResponse) => {
@@ -64,7 +64,7 @@ describe('Login Interceptor', () => {
 
     it('refresh token success', () => {
         const userToken = TestBed.inject(UserToken);
-        userToken.set({token: 'abcdef', refresh_token: '123456'});
+        userToken.set({token: 'abcdef'});
 
         http.get('/api/test').subscribe();
         let req = httpMock.expectOne('/api/test');
@@ -72,7 +72,7 @@ describe('Login Interceptor', () => {
         req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
         req = httpMock.expectOne('/api/auth/token/refresh');
-        req.flush({token: 'qwerty', refresh_token: '123456'});
+        req.flush({token: 'qwerty'});
         
         req = httpMock.expectOne('/api/profile');
         req.flush(
@@ -93,7 +93,7 @@ describe('Login Interceptor', () => {
 
     it('refresh token success but error on api', () => {
         const userToken = TestBed.inject(UserToken);
-        userToken.set({token: 'abcdef', refresh_token: '123456'});
+        userToken.set({token: 'abcdef'});
 
         http.get('/api/test').subscribe({
             error: (err: HttpErrorResponse) => {
@@ -105,7 +105,7 @@ describe('Login Interceptor', () => {
         req.flush({message: 'error'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
         req = httpMock.expectOne('/api/auth/token/refresh');
-        req.flush({token: 'qwerty', refresh_token: '123456'});
+        req.flush({token: 'qwerty'});
         
         req = httpMock.expectOne('/api/profile');
         req.flush(
@@ -126,7 +126,7 @@ describe('Login Interceptor', () => {
 
     it('refresh token error', () => {
         const userToken = TestBed.inject(UserToken);
-        userToken.set({token: 'abcdef', refresh_token: '123456'});
+        userToken.set({token: 'abcdef'});
 
         http.get('/api/test').subscribe({
             error: (err: HttpErrorResponse) => {

@@ -18,7 +18,6 @@ export interface LoginData {
 
 export interface TokenResponse {
     token: string,
-    refresh_token: string,
 }
 
 export interface TokenVerification {
@@ -50,8 +49,8 @@ export class AuthService {
     login(loginData : LoginData): Observable<User>
     {
         return this.http.post<TokenResponse>(
-            '/api/auth/login', 
-            loginData, 
+            '/api/auth/login',
+            loginData,
             {context: new HttpContext().set(SKIP_TOKEN, true)}
         ).pipe(
             switchMap(token => {
@@ -62,7 +61,7 @@ export class AuthService {
         ;
     }
 
-    loadUser(token : TokenResponse | null = null): Observable<NullableUser> 
+    loadUser(token : TokenResponse | null = null): Observable<NullableUser>
     {
         if (token !== null) {
             this.userToken.set(token);
@@ -81,12 +80,12 @@ export class AuthService {
         return this.userService.user$;
     }
 
-    register(registerData : RegisterData): Observable<Object> 
+    register(registerData : RegisterData): Observable<Object>
     {
         return this.http.put('/api/auth/register', registerData, {context: new HttpContext().set(SKIP_TOKEN, true)});
     }
-    
-    resetPassword(username : string): Observable<Object> 
+
+    resetPassword(username : string): Observable<Object>
     {
         return this.http.put('/api/auth/password/forgot-password', {username: username});
     }
@@ -98,17 +97,16 @@ export class AuthService {
             return of(null);
         }
 
-        return this.http.post('/api/auth/logout', {
-            refresh_token: this.userToken.getRefreshToken()
-        })
+        return this.http.post('/api/auth/logout', {}, { withCredentials: true })
             .pipe(tap(() => this.removeUser()));
     }
 
     refreshToken(): Observable<User>
     {
-        return this.http.post<TokenResponse>('/api/auth/token/refresh', {
-            refresh_token: this.userToken.getRefreshToken()
-        }, {context: new HttpContext().set(SKIP_TOKEN, true)}).pipe(
+        return this.http.post<TokenResponse>('/api/auth/token/refresh', {}, {
+            context: new HttpContext().set(SKIP_TOKEN, true),
+            withCredentials: true,
+        }).pipe(
             switchMap(token => {this.userToken.set(token); return this.getUser()}),
             catchError((error) => {this.removeUser(); return throwError(() => error)})
         );
@@ -159,9 +157,8 @@ export class UserService {
   providedIn: 'root'
 })
 export class UserToken {
-    private readonly _token = 'token';
-    private readonly _refreshToken = 'refresh_token';
-    private _localStorageService = inject(LocalStorageService);
+    private readonly tokenKey = 'token';
+    private readonly localStorageService = inject(LocalStorageService);
 
     get(): TokenResponse | null
     {
@@ -171,34 +168,26 @@ export class UserToken {
 
         return {
             token: this.getToken()!,
-            refresh_token: this.getRefreshToken()!,
         }
     }
 
     getToken(): string | null
     {
-        return this._localStorageService.get(this._token);
-    }
-
-    getRefreshToken(): string | null
-    {
-        return this._localStorageService.get(this._refreshToken);
+        return this.localStorageService.get(this.tokenKey);
     }
 
     set(tokenResponse : TokenResponse) : void
     {
-        this._localStorageService.set(this._token, tokenResponse.token);
-        this._localStorageService.set(this._refreshToken, tokenResponse.refresh_token);
+        this.localStorageService.set(this.tokenKey, tokenResponse.token);
     }
 
     isSet() : boolean
     {
-        return this._localStorageService.get(this._token) !== null;
+        return this.localStorageService.get(this.tokenKey) !== null;
     }
 
     remove() : void
     {
-        this._localStorageService.remove(this._token);
-        this._localStorageService.remove(this._refreshToken);
+        this.localStorageService.remove(this.tokenKey);
     }
 }
