@@ -1,7 +1,6 @@
 import { HttpClient, HttpContext, HttpContextToken } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { catchError, filter, Observable, of, ReplaySubject, switchMap, take, tap, throwError } from 'rxjs';
-import { LocalStorageService } from '../shared/utils/local-storage.service';
+import { catchError, EMPTY, filter, map, Observable, of, ReplaySubject, switchMap, take, tap } from 'rxjs';
 
 export interface User {
     displayName: string,
@@ -61,20 +60,6 @@ export class AuthService {
         ;
     }
 
-    loadUser(token : TokenResponse | null = null): Observable<NullableUser>
-    {
-        if (token !== null) {
-            this.userToken.set(token);
-        }
-
-        if (!this.userToken.isSet()) {
-            this.removeUser();
-            return of(null);
-        }
-
-        return this.getUser();
-    }
-
     getObservableUser(): Observable<NullableUser>
     {
         return this.userService.user$;
@@ -107,8 +92,13 @@ export class AuthService {
             context: new HttpContext().set(SKIP_TOKEN, true),
             withCredentials: true,
         }).pipe(
-            switchMap(token => {this.userToken.set(token); return this.getUser()}),
-            catchError((error) => {this.removeUser(); return throwError(() => error)})
+            tap(token => this.userToken.set(token)),
+            switchMap(() => this.getUser()),
+            catchError(() => {
+                this.userService.setUser(null);
+                this.userToken.remove();
+                return EMPTY;
+            })
         );
     }
 
@@ -157,37 +147,25 @@ export class UserService {
   providedIn: 'root'
 })
 export class UserToken {
-    private readonly tokenKey = 'token';
-    private readonly localStorageService = inject(LocalStorageService);
-
-    get(): TokenResponse | null
-    {
-        if (!this.isSet()) {
-            return null;
-        }
-
-        return {
-            token: this.getToken()!,
-        }
-    }
+    private tokenResponse : TokenResponse | null = null;
 
     getToken(): string | null
     {
-        return this.localStorageService.get(this.tokenKey);
+        return this.tokenResponse?.token ?? null;
     }
 
     set(tokenResponse : TokenResponse) : void
     {
-        this.localStorageService.set(this.tokenKey, tokenResponse.token);
+        this.tokenResponse = tokenResponse;
     }
 
     isSet() : boolean
     {
-        return this.localStorageService.get(this.tokenKey) !== null;
+        return this.tokenResponse !== null;
     }
 
     remove() : void
     {
-        this.localStorageService.remove(this.tokenKey);
+        this.tokenResponse = null;
     }
 }

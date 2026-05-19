@@ -11,7 +11,8 @@ export const unsignedGuard: CanActivateChildFn = () => {
     const toasterService = inject(ToastService);
     
     return userService.waitFirstUser()
-        .pipe(map(user => {
+        .pipe(
+            map(user => {
                 if (user === null) {
                     return true;
                 }
@@ -31,8 +32,8 @@ export const signedGuard: CanActivateChildFn = () => {
     const lastRouteSession = inject(LastRouteService);
 
     return userService.waitFirstUser()
-        .pipe(map(
-            user => {
+        .pipe(
+            map(user => {
                 if (user !== null) {
                     return true;
                 }

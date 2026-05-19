@@ -140,6 +140,6 @@ describe('Login Interceptor', () => {
         req = httpMock.expectOne('/api/auth/refresh');
         req.flush({message: 'Unauthorized'}, {status: HTTP_UNAUTHORIZED, statusText: 'Unauthorized'});
 
-        expect(userToken.get()).toBeNull();
+        expect(userToken.getToken()).toBeNull();
     });
 });

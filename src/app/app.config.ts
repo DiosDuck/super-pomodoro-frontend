@@ -16,7 +16,7 @@ export const appConfig: ApplicationConfig = {
     provideHttpClient(withInterceptors([userInterceptor, loaderInterceptor])),
     provideAppInitializer(() => {
       const authService = inject(AuthService);
-      return authService.loadUser().pipe(take(1));
+      return authService.refreshToken();
     })
   ]
 };
